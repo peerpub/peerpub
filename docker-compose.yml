@@ -1,0 +1,19 @@
+# Docs for camunda container see https://github.com/camunda/docker-camunda-bpm-platform
+version: '3'
+
+services:
+  camunda:
+    image: camunda/camunda-bpm-platform:7.8.0
+    volumes:
+      - ./target/peerpub.war:/camunda/webapps/peerpub.war
+    environment:
+      - TZ=Europe/Berlin
+    ports:
+      - "8080:8080"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.0.181.0/24
