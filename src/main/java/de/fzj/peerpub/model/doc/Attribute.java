@@ -6,13 +6,15 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.AllArgsConstructor;
 
+import org.springframework.data.annotation.Id;
+
 @ToString
 @AllArgsConstructor
 public class Attribute {
   /**
    * The attributes unique ID, will be used as primary key.
    */
-  @Getter @NonNull private final String id;
+  @Id @Getter @NonNull private final String id;
 
   /**
    * Display name for this attribute (printed as label)
