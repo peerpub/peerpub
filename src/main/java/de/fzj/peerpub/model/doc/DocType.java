@@ -29,6 +29,7 @@ public class DocType {
   @NonNull @Setter @Getter private Boolean system = false;
   @NonNull @Setter @Getter private Boolean multidoc = false;
 
+  //TODO: Change to Document instead of Map for easier storage in MongoDB
   @NonNull
   private Map<Attribute,Boolean> attributes = new HashMap<Attribute,Boolean>();
   @NonNull
