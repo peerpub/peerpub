@@ -49,13 +49,12 @@ package model.doc {
     -attributes: Map<Attribute,Boolean>
     -defaults: Map<Attribute,String>
 
-    +setName(String name) {exceptions=UpdateFailure}
-    +setMultidoc(Boolean isMultidoc) {exceptions=UpdateFailure}
+    +addAttributes(a: Attribute, mandatory: Boolean, default: String)
     +getAttributes(): Set<Attribute>
     +getAttributes(Boolean incMand, Boolean incOpt): Set<Attribute>
-    +getDefault(Attribute a): String
-    +isMandatory(Attribute a): Boolean
-    +isOptional(Attribute a): Boolean
+    +getDefault(a: Attribute): String
+    +isMandatory(a: Attribute): Boolean
+    +isOptional(a: Attribute): Boolean
     (...)
   }
 
