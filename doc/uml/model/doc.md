@@ -62,6 +62,7 @@ package model.doc {
   class Attribute {
     -id: String
     -name: String
+    -label: String
     -key: String
     -description: String
     -jsonschema: String

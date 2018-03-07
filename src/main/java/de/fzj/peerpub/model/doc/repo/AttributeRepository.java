@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface AttributeRepository extends MongoRepository<Attribute, String> {
 
     public Attribute findByName(String name);
-    public Attribute findByKey(String key);
+    public List<Attribute> findByLabel(String label);
+    public List<Attribute> findByKey(String key);
 
 }
