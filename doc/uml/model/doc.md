@@ -42,14 +42,14 @@ package model.doc {
   DocType - Document
   Attribute - DocType
   class DocType {
-    -id: String
+    -name: String
     -system: Boolean
     -multidoc: Boolean
-    -name: String
-    -attributes: Map<Attribute,Boolean>
-    -defaults: Map<Attribute,String>
+    -attributes: Attribute[0..*]
+    -mandatory: Map<String,Boolean>
+    -defaults: Map<String,String>
 
-    +addAttributes(a: Attribute, mandatory: Boolean, default: String)
+    +putAttributes(a: Attribute, mandatory: Boolean, defaultValue: String)
     +getAttributes(): Set<Attribute>
     +getAttributes(Boolean incMand, Boolean incOpt): Set<Attribute>
     +getDefault(a: Attribute): String
@@ -59,7 +59,6 @@ package model.doc {
   }
 
   class Attribute {
-    -id: String
     -name: String
     -label: String
     -key: String

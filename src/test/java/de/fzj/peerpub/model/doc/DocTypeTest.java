@@ -1,43 +1,62 @@
 package de.fzj.peerpub.model.doc;
 
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.fzj.peerpub.model.doc.DocType;
 import de.fzj.peerpub.model.doc.Attribute;
 
-import java.util.Set;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 
 @Tag("fast")
 class DocTypeTest {
+  DocType dt;
+  Attribute a;
 
-  static DocType TESTTYPE;
+  @BeforeEach void setup() {
+    this.a = new Attribute("a","a","A","An a desc...","{}");
+    Attribute b = new Attribute("b","b","B","A b desc...","{}");
 
-  @BeforeAll static void setUp(TestInfo ti) {
-    Attribute attr = new Attribute("12345","test","Test Label","test","A test is...","{}");
-    Map<Attribute,Boolean> attribs = new HashMap<Attribute,Boolean>();
-    attribs.put(attr,true);
-    Map<Attribute,String> defs = new HashMap<Attribute,String>();
-    defs.put(attr,"value");
-    TESTTYPE = new DocType("123","test",true,true,attribs,defs);
+    Map<String,Boolean> man = new HashMap<String,Boolean>();
+    man.put("a",true);
+    man.put("b",false);
+
+    Map<String,String> defs = new HashMap<String,String>();
+    defs.put("a","defaultA");
+    defs.put("b","defaultB");
+
+    this.dt = new DocType("test",true,false,Arrays.asList(a,b),man,defs);
   }
 
   @Test
-  @DisplayName("model.doc.DocType addAttribute() should fail if no default for mandatory attribute")
-  void failAddAttribute_NoDefaultForMandatory() {
-    Attribute attr = new Attribute("123456","testA","Test Label","test","A test is...","{}");
-    Assertions.assertThrows(IllegalArgumentException.class,
-                            () -> {TESTTYPE.addAttribute(attr, true, null);});
-    Assertions.assertThrows(IllegalArgumentException.class,
-                            () -> {TESTTYPE.addAttribute(attr, true, "");});
+  @DisplayName("model.doc.DocType putAttribute() should fail if no default for mandatory attribute")
+  void failNoDefaultForMandatory() {
+    Attribute attr = new Attribute("c","c","C","A c is...","{}");
+    assertThrows(IllegalArgumentException.class,
+                            () -> {dt.putAttribute(attr, true, null);});
+    assertThrows(IllegalArgumentException.class,
+                            () -> {dt.putAttribute(attr, true, "");});
+  }
+
+  @Test
+  void replaceSchemaEntriesForDups() {
+    assertTrue("defaultA".equals(dt.getDefaults().get(this.a.getName())));
+    assertTrue(dt.getMandatory().get(this.a.getName()));
+
+    // a is inserted as mandatory, now lets make it optional
+    // and replace its default value
+    dt.putAttribute(this.a, false, "test");
+
+    assertTrue("test".equals(dt.getDefaults().get(this.a.getName())));
+    assertFalse(dt.getMandatory().get(this.a.getName()));
   }
 
   /*
