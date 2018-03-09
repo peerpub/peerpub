@@ -11,35 +11,28 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import de.fzj.peerpub.model.doc.DocType;
 import de.fzj.peerpub.model.doc.Attribute;
+import de.fzj.peerpub.model.doc.AttributeTest;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import de.fzj.peerpub.utils.Random;
 
 @Tag("fast")
 class DocTypeTest {
   DocType dt;
-  Attribute a;
 
   @BeforeEach void setup() {
-    this.a = new Attribute("a","a","A","An a desc...","{}");
-    Attribute b = new Attribute("b","b","B","A b desc...","{}");
-
-    Map<String,Boolean> man = new HashMap<String,Boolean>();
-    man.put("a",true);
-    man.put("b",false);
-
-    Map<String,String> defs = new HashMap<String,String>();
-    defs.put("a","defaultA");
-    defs.put("b","defaultB");
-
-    this.dt = new DocType("test",true,false,Arrays.asList(a,b),man,defs);
+    this.dt = generate();
   }
 
   @Test
   @DisplayName("model.doc.DocType putAttribute() should fail if no default for mandatory attribute")
   void failNoDefaultForMandatory() {
-    Attribute attr = new Attribute("c","c","C","A c is...","{}");
+    Attribute attr = AttributeTest.generate();
     assertThrows(IllegalArgumentException.class,
                             () -> {dt.putAttribute(attr, true, null);});
     assertThrows(IllegalArgumentException.class,
@@ -48,15 +41,17 @@ class DocTypeTest {
 
   @Test
   void replaceSchemaEntriesForDups() {
-    assertTrue("defaultA".equals(dt.getDefaults().get(this.a.getName())));
-    assertTrue(dt.getMandatory().get(this.a.getName()));
+    Attribute a = AttributeTest.generate();
+
+    this.dt.putAttribute(a, true, "defaultA");
+    assertTrue("defaultA".equals(this.dt.getDefaults().get(a.getName())));
+    assertTrue(this.dt.getMandatory().get(a.getName()));
 
     // a is inserted as mandatory, now lets make it optional
     // and replace its default value
-    dt.putAttribute(this.a, false, "test");
-
-    assertTrue("test".equals(dt.getDefaults().get(this.a.getName())));
-    assertFalse(dt.getMandatory().get(this.a.getName()));
+    this.dt.putAttribute(a, false, "test");
+    assertTrue("test".equals(this.dt.getDefaults().get(a.getName())));
+    assertFalse(this.dt.getMandatory().get(a.getName()));
   }
 
   /*
@@ -102,4 +97,32 @@ class DocTypeTest {
   //TODO: test setName exception when system type
   //TODO: test setMultidoc exception when system type
   //TODO: test getAttributes with different inclusions of mandatory/optional attributes
+
+  public static List<DocType> generate(int num) {
+    // generate at least 2, at max 20 random attributes
+    List<Attribute> attrs = AttributeTest.generate((Random.getInt(num)+2)%20);
+
+    List<DocType> dtl = new ArrayList<DocType>();
+    for(int i = 0; i < num; i++) {
+      // generate a random list of attributes to use for every doctype
+      Collections.shuffle(attrs);
+      List<Attribute> as = attrs.subList(0, (Random.getInt(num)+1)%20);
+
+      // generate random values for each attribute
+      Map<String,Boolean> man = new HashMap<String,Boolean>();
+      Map<String,String> defs = new HashMap<String,String>();
+      for(int j = 0; j < as.size(); j++) {
+        man.put(as.get(j).getName(), Random.getBool());
+        defs.put(as.get(j).getName(), Random.getString(10));
+      }
+
+      // generate the doctype
+      DocType d = new DocType(Random.getString(6), Random.getBool(), Random.getBool(), as, man, defs);
+      dtl.add(d);
+    }
+    return dtl;
+  }
+  public static DocType generate() {
+    return generate(1).get(0);
+  }
 }
