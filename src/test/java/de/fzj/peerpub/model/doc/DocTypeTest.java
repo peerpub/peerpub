@@ -22,7 +22,7 @@ import java.util.Collections;
 import de.fzj.peerpub.utils.Random;
 
 @Tag("fast")
-class DocTypeTest {
+public class DocTypeTest {
   DocType dt;
 
   @BeforeEach void setup() {

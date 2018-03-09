@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import de.fzj.peerpub.utils.Random;
 
 @Tag("fast")
-class AttributeTest {
+public class AttributeTest {
 
   @Test
   @DisplayName("model.doc.Attribute validation test")

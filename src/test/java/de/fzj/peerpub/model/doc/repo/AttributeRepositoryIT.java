@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.fzj.peerpub.model.doc.Attribute;
+import de.fzj.peerpub.model.doc.AttributeTest;
 import de.fzj.peerpub.model.doc.repo.AttributeRepository;
 
 @ExtendWith(SpringExtension.class)
@@ -47,12 +48,11 @@ public class AttributeRepositoryIT {
     @Test
     void findByName() {
       assertNotNull(attributeRepository);
-      Attribute a = new Attribute("a","a","A","A a attribute...","{}");
-      Attribute b = new Attribute("b","b","B","A b attribute...","{}");
-      List all = Arrays.asList(a, b);
-      attributeRepository.saveAll(all);
-      assertEquals(a,attributeRepository.findByName("a"));
-      assertNotEquals(a,attributeRepository.findByName("b"));
+      Attribute a = AttributeTest.generate();
+      Attribute b = AttributeTest.generate();
+      attributeRepository.saveAll(Arrays.asList(a, b));
+      assertEquals(a,attributeRepository.findByName(a.getName()));
+      assertNotEquals(a,attributeRepository.findByName(b.getName()));
     }
 
     @Test

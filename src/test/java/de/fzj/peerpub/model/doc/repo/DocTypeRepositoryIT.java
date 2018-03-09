@@ -19,8 +19,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.fzj.peerpub.model.doc.DocType;
+import de.fzj.peerpub.model.doc.DocTypeTest;
 import de.fzj.peerpub.model.doc.repo.DocTypeRepository;
-import de.fzj.peerpub.model.doc.Attribute;
 import de.fzj.peerpub.model.doc.repo.AttributeRepository;
 
 import java.util.Map;
@@ -32,9 +32,6 @@ import java.util.Arrays;
 @DataMongoTest
 @Tag("integration-embedded")
 public class DocTypeRepositoryIT {
-
-    String collectionName;
-    DocType doctype;
 
     @Autowired
     private AttributeRepository attrRepository;
@@ -58,15 +55,9 @@ public class DocTypeRepositoryIT {
       assertNotNull(attrRepository);
       assertNotNull(docTypeRepository);
 
-      Attribute a = new Attribute("a","a","A","An a desc...","{}");
-      attrRepository.save(a);
-
-      Map<String,Boolean> attribs = new HashMap<String,Boolean>();
-      Map<String,String> defs = new HashMap<String,String>();
-      attribs.put(a.getName(),true);
-      defs.put(a.getName(),"value");
-      DocType dt = new DocType("test",true,true,Arrays.asList(a),attribs,defs);
-
+      DocType dt = DocTypeTest.generate();
+      // this is needed as we delete anything in MetadataAttributes before each test...
+      attrRepository.saveAll(dt.getAttributes());
       docTypeRepository.save(dt);
 
       /*
@@ -75,13 +66,14 @@ public class DocTypeRepositoryIT {
         System.out.println(d);
       */
 
-      DocType dt2 = docTypeRepository.findByName("test");
+      String dtName = dt.getName();
+      DocType dt2 = docTypeRepository.findByName(dtName);
       assertEquals(dt,dt2);
-      assertEquals(dt.getName(),dt2.getName());
-      assertEquals(dt.getSystem(),dt2.getSystem());
-      assertEquals(dt.getMultidoc(),dt2.getMultidoc());
-      assertEquals(dt.getAttributes(),dt2.getAttributes());
-      assertEquals(dt.getMandatory(),dt2.getMandatory());
-      assertEquals(dt.getDefaults(),dt2.getDefaults());
+      assertEquals(dt.getName(), dt2.getName());
+      assertEquals(dt.getSystem(), dt2.getSystem());
+      assertEquals(dt.getMultidoc(), dt2.getMultidoc());
+      assertEquals(dt.getAttributes(), dt2.getAttributes());
+      assertEquals(dt.getMandatory(), dt2.getMandatory());
+      assertEquals(dt.getDefaults(), dt2.getDefaults());
     }
 }
