@@ -14,18 +14,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection="MetadataAttributes")
 public class Attribute {
   /**
-   * The attributes unique ID, will be used as primary key.
-   */
-  @Id private String id;
-
-  /**
    * Unique name for this attribute to have definite search results, etc.
+   * As it is unique anyway, use it as the _id for MongoDB.
    */
-  @Indexed(unique = true) @NonNull
-  private String name;
+  @Id @Indexed(unique = true) @NonNull private String name;
   /**
    * The key value, under which the Attribute value will be added to the
    * composed metadata set.
+   * BEWARE: the controller will apply restrictions on the content.
    */
   @NonNull
   private String key;

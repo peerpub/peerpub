@@ -15,8 +15,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
+import org.bson.Document;
+import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,15 +42,6 @@ public class AttributeRepositoryIT {
     void emptyDatabase() {
       assertNotNull(attributeRepository);
       attributeRepository.deleteAll();
-    }
-
-    @Test
-    void uniqueIndexOnName() {
-      assertNotNull(attributeRepository);
-      Attribute a = new Attribute("a","a","A","A a attribute...","{}");
-      Attribute b = new Attribute("a","b","B","A b attribute...","{}");
-      attributeRepository.save(a);
-      assertThrows(DuplicateKeyException.class, () -> {attributeRepository.save(b);});
     }
 
     @Test
