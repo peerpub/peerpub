@@ -34,9 +34,9 @@ public class DocTypeTest {
   void failNoDefaultForMandatory() {
     Attribute attr = AttributeTest.generate();
     assertThrows(IllegalArgumentException.class,
-                            () -> {dt.putAttribute(attr, true, null);});
+                 () -> {dt.putAttribute(attr, true, null);});
     assertThrows(IllegalArgumentException.class,
-                            () -> {dt.putAttribute(attr, true, "");});
+                 () -> {dt.putAttribute(attr, true, "");});
   }
 
   @Test
@@ -100,13 +100,13 @@ public class DocTypeTest {
 
   public static List<DocType> generate(int num) {
     // generate at least 2, at max 20 random attributes
-    List<Attribute> attrs = AttributeTest.generate((Random.getInt(num)+2)%20);
+    List<Attribute> attrs = AttributeTest.generate(Random.getInt(num%19)+2);
 
     List<DocType> dtl = new ArrayList<DocType>();
     for(int i = 0; i < num; i++) {
       // generate a random list of attributes to use for every doctype
       Collections.shuffle(attrs);
-      List<Attribute> as = attrs.subList(0, (Random.getInt(num)+1)%20);
+      List<Attribute> as = attrs.subList(0, Random.getInt(attrs.size()));
 
       // generate random values for each attribute
       Map<String,Boolean> man = new HashMap<String,Boolean>();
