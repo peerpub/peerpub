@@ -21,6 +21,6 @@ public class Random {
     return rnd.nextInt(range);
   }
   public static boolean getBool() {
-    return rnd.nextInt(1)==0;
+    return rnd.nextBoolean();
   }
 }
