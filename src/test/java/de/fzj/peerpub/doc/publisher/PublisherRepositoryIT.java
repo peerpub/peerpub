@@ -1,4 +1,4 @@
-package de.fzj.peerpub.model.doc.repo;
+package de.fzj.peerpub.doc.publisher;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
@@ -20,15 +20,9 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.fzj.peerpub.utils.Random;
-import de.fzj.peerpub.model.doc.Attribute;
-import de.fzj.peerpub.model.doc.AttributeTest;
-import de.fzj.peerpub.model.doc.repo.AttributeRepository;
-import de.fzj.peerpub.model.doc.DocType;
-import de.fzj.peerpub.model.doc.DocTypeTest;
-import de.fzj.peerpub.model.doc.repo.DocTypeRepository;
-import de.fzj.peerpub.model.doc.Publisher;
-import de.fzj.peerpub.model.doc.PublisherTest;
-import de.fzj.peerpub.model.doc.repo.PublisherRepository;
+import de.fzj.peerpub.doc.doctype.*;
+import de.fzj.peerpub.doc.attribute.*;
+import de.fzj.peerpub.doc.publisher.*;
 
 import java.util.Set;
 import java.util.HashSet;

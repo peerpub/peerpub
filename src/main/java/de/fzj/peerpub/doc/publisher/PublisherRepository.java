@@ -1,8 +1,8 @@
-package de.fzj.peerpub.model.doc.repo;
+package de.fzj.peerpub.doc.publisher;
 
 import java.util.Set;
 
-import de.fzj.peerpub.model.doc.Publisher;
+import de.fzj.peerpub.doc.publisher.Publisher;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.core.query.TextCriteria;

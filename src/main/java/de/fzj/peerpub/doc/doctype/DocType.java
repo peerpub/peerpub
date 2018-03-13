@@ -1,4 +1,4 @@
-package de.fzj.peerpub.model.doc;
+package de.fzj.peerpub.doc.doctype;
 
 import lombok.NonNull;
 import lombok.Data;
@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import de.fzj.peerpub.model.doc.Attribute;
+import de.fzj.peerpub.doc.attribute.Attribute;
 
 import java.util.List;
 import java.util.ArrayList;

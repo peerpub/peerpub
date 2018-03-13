@@ -1,8 +1,8 @@
-package de.fzj.peerpub.model.doc.repo;
+package de.fzj.peerpub.doc.doctype;
 
 import java.util.List;
 
-import de.fzj.peerpub.model.doc.DocType;
+import de.fzj.peerpub.doc.doctype.DocType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface DocTypeRepository extends MongoRepository<DocType, String> {

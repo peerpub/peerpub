@@ -1,4 +1,4 @@
-package de.fzj.peerpub.model.doc;
+package de.fzj.peerpub.doc.publisher;
 
 import lombok.NonNull;
 import lombok.Data;
@@ -14,8 +14,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 // do not import due to conflicting name with org.bson.Document
 //import org.springframework.data.mongodb.core.mapping.Document;
 
-import de.fzj.peerpub.model.doc.Attribute;
-import de.fzj.peerpub.model.doc.DocType;
+import de.fzj.peerpub.doc.attribute.Attribute;
+import de.fzj.peerpub.doc.doctype.DocType;
 
 import org.bson.Document;
 import java.util.List;

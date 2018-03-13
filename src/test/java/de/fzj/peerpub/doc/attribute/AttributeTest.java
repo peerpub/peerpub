@@ -1,4 +1,4 @@
-package de.fzj.peerpub.model.doc;
+package de.fzj.peerpub.doc.attribute;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.TestInfo;
 import java.util.List;
 import java.util.ArrayList;
 import de.fzj.peerpub.utils.Random;
+
+import de.fzj.peerpub.doc.attribute.*;
 
 @Tag("fast")
 public class AttributeTest {

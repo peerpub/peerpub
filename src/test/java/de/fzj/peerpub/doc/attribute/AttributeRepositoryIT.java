@@ -1,4 +1,4 @@
-package de.fzj.peerpub.model.doc.repo;
+package de.fzj.peerpub.doc.attribute;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 
-import de.fzj.peerpub.model.doc.Attribute;
-import de.fzj.peerpub.model.doc.AttributeTest;
-import de.fzj.peerpub.model.doc.repo.AttributeRepository;
+import de.fzj.peerpub.doc.attribute.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest

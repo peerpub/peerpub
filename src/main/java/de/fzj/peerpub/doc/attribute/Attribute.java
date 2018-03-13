@@ -1,4 +1,4 @@
-package de.fzj.peerpub.model.doc;
+package de.fzj.peerpub.doc.attribute;
 
 import lombok.NonNull;
 import lombok.Data;
