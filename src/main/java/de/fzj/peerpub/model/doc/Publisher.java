@@ -300,4 +300,26 @@ public class Publisher {
     } else
       throw new IllegalArgumentException("No schema defined for this document type. Possible data corruption?");
   }
+
+  /**
+   * equals(), extended Version. Normally we only want equals() to compare
+   * the name, as anything else is not important. In some cases, we might want
+   * a more verbose look, especially for testing.
+   */
+  public boolean equalsDeep(Object o) {
+    if(this.equals(o)) {
+      Publisher oP = (Publisher)o;
+      if(oP.getSystem() != this.getSystem() || oP.getReviewing() != this.getReviewing())
+        return false;
+      if( ! this.getSupports().equals(oP.getSupports()))
+        return false;
+      if( ! this.getAttributes().equals(oP.getAttributes()))
+        return false;
+      if( ! this.getDisplayName().equals(oP.getDisplayName()) ||
+          ! this.getAliases().equals(oP.getAliases()))
+        return false;
+      return true;
+    } else
+      return false;
+  }
 }
