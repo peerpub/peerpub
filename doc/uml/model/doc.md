@@ -135,22 +135,30 @@ package model.doc {
   DocType --o Publisher
   Attribute -- Publisher
   class Publisher {
-    -id: String
     -name: String
     -reviewing: Boolean
     -system: Boolean
+    -supports: DocType[0..*]
+    -attributes: Map<String,Map<String,org.bson.Document>>
+    -displayName: String
     -aliases: String[0..*]
-    -supports: Set<DocType>
-    -attributes: Map<DocType,Map<Attribute,Boolean>>
-    -defaults: Map<DocType,Map<Attribute,String>>
 
-    +getSupported(): Set<DocType>
-    +getAttributes(DocType d): Set<Attribute>
-    +getAttributes(DocType d, Boolean incMand, Boolean incOpt): Set<Attribute>
-    +getDefault(DocType d, Attribute a): String
-    +isMandatory(DocType d, Attribute a): Boolean
-    +isOptional(DocType d, Attribute a): Boolean
-    (...)
+    +addSupDocType(dt: DocType)
+    +removeSupDocType(dt: DocType)
+    +isSupported(dt: DocType)
+    +addAlias(alias: String)
+    +removeAlias(alias: String): String
+    +removeAllAlias()
+    -hasSchema(dt: DocType)
+    -hasDocument(schema: Map<String,org.bson.Document>, a: String)
+    -hasDocument(schema: Map<String,org.bson.Document>, a: Attribute)
+    +putAttribute(dt: DocType, a: Attribute, mandatory: Boolean, defaultValue: String)
+    +removeAttribute(dt: DocType, a: Attribute)
+    +getAttributes(dt: DocType): Set<String>
+    +getAttributes(dt: DocType, mandatory: Boolean, optional: Boolean): Set<String>
+    +getDefault(dt: DocType, a: Attribute): String
+    +isMandatory(dt: DocType, a: Attribute): Boolean
+    +isOptional(dt: DocType, a: Attribute): Boolean
   }
 
   Document - FundAward
