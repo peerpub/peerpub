@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import de.fzj.peerpub.doc.attribute.*;
 
@@ -49,8 +50,8 @@ public class AttributeRepositoryIT {
       Attribute a = AttributeTest.generate();
       Attribute b = AttributeTest.generate();
       attributeRepository.saveAll(Arrays.asList(a, b));
-      assertEquals(a,attributeRepository.findByName(a.getName()));
-      assertNotEquals(a,attributeRepository.findByName(b.getName()));
+      assertEquals(Optional.of(a),attributeRepository.findByName(a.getName()));
+      assertNotEquals(Optional.of(a),attributeRepository.findByName(b.getName()));
     }
 
     @Test
