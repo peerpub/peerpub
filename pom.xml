@@ -332,5 +332,17 @@
       <version>${junit.platform.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
+    Replace with official mockito extension once released...
+    See https://github.com/mockito/mockito/issues/445,
+        https://github.com/mockito/mockito/issues/1221 and
+        https://github.com/JeffreyFalgout/junit5-extensions/tree/master/mockito-extension
+    -->
+    <dependency>
+      <groupId>name.falgout.jeffrey.testing.junit5</groupId>
+      <artifactId>mockito-extension</artifactId>
+      <version>1.0.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
