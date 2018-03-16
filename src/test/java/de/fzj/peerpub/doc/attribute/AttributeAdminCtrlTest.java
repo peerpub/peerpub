@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,14 +41,14 @@ import de.fzj.peerpub.log.*;
 @ExtendWith(MockitoExtension.class)
 public class AttributeAdminCtrlTest {
 
-  @Autowired
-  private MockMvc mvc;
-
   @Mock
   private AttributeRepository attributeRepository;
 
   @InjectMocks
   private AttributeAdminCtrl attributeAdminCtrl;
+
+  @Autowired
+  private MockMvc mvc;
 
   @BeforeEach
   void setup() {
@@ -57,6 +58,14 @@ public class AttributeAdminCtrlTest {
             //.addFilters(new SuperHeroFilter())
             .build();
   }
+
+  /**
+   * Alternate approach using static MockMvc, thus only initializing the context once:
+   * 1) private static AttributeAdminCtrl attributeAdminCtrl = new AttributeAdminCtrl();
+   * 2) private static MockMvc mvc = MockMvcBuilders.standaloneSetup(attributeAdminCtrl).build();
+   * 3) Remove setup() as not needed.
+   * This approach seems to be slightly quicker (about 0.4 secs for 6 tests).
+   */
 
   // READ
   @Test
