@@ -6,8 +6,8 @@ package doc.attribute {
 
   class Attribute {
     -name: String
-    -label: String
     -key: String
+    -label: String
     -description: String
     -jsonschema: String
   }
@@ -22,16 +22,14 @@ package doc.attribute {
   Attribute <- AttributeAdminCtrl
   class AttributeAdminCtrl {
     +list()
-    +createForm()
-    +createSubmit()
-    +updateForm()
-    +updateSubmit()
-    +deleteForm()
-    +deleteSubmit()
+    +listJson()
+    +addGetForm()
+    +addPostForm()
+    +updateGetForm()
+    +updatePostForm()
+    +deleteGetForm()
+    +deletePostForm()
   }
-  note bottom of AttributeAdminCtrl
-  Definition not yet complete.
-  end note
 }
 note top of doc.attribute
 Scaffolding methods have been
