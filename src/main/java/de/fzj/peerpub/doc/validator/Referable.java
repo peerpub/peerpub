@@ -11,7 +11,7 @@ import javax.validation.Payload;
 
 @Documented
 @Constraint(validatedBy = ReferableValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD })
+@Target( { ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Referable {
     String message() default "{referable.notmatching}";

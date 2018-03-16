@@ -4,11 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 // replace with "org.mockito.junit5.MockitoExtension" once it gets released...
@@ -25,7 +21,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.http.MediaType;
 
+import com.mongodb.MongoException;
+
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -39,6 +38,7 @@ import de.fzj.peerpub.doc.attribute.*;
 import de.fzj.peerpub.log.*;
 
 @ExtendWith(MockitoExtension.class)
+@Tag("medium")
 public class AttributeAdminCtrlTest {
 
   @Mock
@@ -162,4 +162,31 @@ public class AttributeAdminCtrlTest {
 
   // UPDATE
   // DELETE
+  @Test
+  void deleteSuccess() throws Exception {
+    //given
+    String name = "test";
+    /*
+     * not usefull here, as deleteById() return void if successfull...
+     * willThrow(new DataAccessException("test")).given(attributeRepository).deleteById(name);
+     */
+    //when
+    ResultActions result = mvc.perform(get("/admin/attributes/delete/{name}",name));
+    //then
+    result.andExpect(status().isFound())
+          .andExpect(flash().attribute("success", "delete.success"))
+          .andExpect(redirectedUrl("/admin/attributes"));
+  }
+  @Test
+  void deleteInvalidOrNonExistantName() throws Exception {
+    //given
+    String name = "test +ABC";
+    willThrow(new MongoException("fault")).given(attributeRepository).deleteById(name);
+    //when
+    ResultActions result = mvc.perform(get("/admin/attributes/delete/{name}",name));
+    //then
+    result.andExpect(status().isFound())
+          .andExpect(flash().attribute("fail", "delete.failed"))
+          .andExpect(redirectedUrl("/admin/attributes"));
+  }
 }

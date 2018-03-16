@@ -27,8 +27,7 @@ package doc.attribute {
     +addPostForm()
     +updateGetForm()
     +updatePostForm()
-    +deleteGetForm()
-    +deletePostForm()
+    +delete()
   }
 }
 note top of doc.attribute

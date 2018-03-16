@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,13 @@ import org.springframework.validation.annotation.Validated;
 import de.fzj.peerpub.doc.attribute.AttributeRepository;
 import de.fzj.peerpub.doc.attribute.Attribute;
 import de.fzj.peerpub.log.*;
+import de.fzj.peerpub.doc.validator.Referable;
 
 import java.util.List;
 import java.util.ArrayList;
 
 @Controller
+@Validated
 public class AttributeAdminCtrl {
 
   public static final String LIST = "attributeList";
@@ -76,6 +79,21 @@ public class AttributeAdminCtrl {
     }
     // return to list of all attributes and set success flag with message code
     redirectAttr.addFlashAttribute("success", "add.success");
+    return "redirect:/admin/attributes";
+  }
+
+  /**
+   * Delete an attribute in the database
+   */
+  @GetMapping("/admin/attributes/delete/{name}")
+  public String delete(@Referable @PathVariable("name") String name, RedirectAttributes redirectAttr) {
+    try {
+      attributeRepository.deleteById(name);
+      redirectAttr.addFlashAttribute("success", "delete.success");
+    } catch(Exception e) {
+      // TODO: log this exception
+      redirectAttr.addFlashAttribute("fail", "delete.failed");
+    }
     return "redirect:/admin/attributes";
   }
 }
