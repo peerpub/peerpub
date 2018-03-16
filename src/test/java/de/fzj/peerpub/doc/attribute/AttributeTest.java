@@ -26,7 +26,7 @@ public class AttributeTest {
     ArrayList attrs = new ArrayList<Attribute>();
     for(int i = 0; i < num; i++) {
       String rnd = Random.getString(6);
-      Attribute a = new Attribute(rnd,rnd.toLowerCase(),rnd.toUpperCase(),Random.getString(10),"{}");
+      Attribute a = new Attribute(rnd,rnd.toLowerCase(),rnd.toUpperCase(),Random.getString(10));
       attrs.add(a);
     }
     return attrs;

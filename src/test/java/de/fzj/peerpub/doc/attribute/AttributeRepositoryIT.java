@@ -57,9 +57,9 @@ public class AttributeRepositoryIT {
     @Test
     void findByLabel() {
       assertNotNull(attributeRepository);
-      Attribute a = new Attribute("a","a","A","A a attribute...","{}");
-      Attribute b = new Attribute("b","b","B","A b attribute...","{}");
-      Attribute c = new Attribute("c","c","B","A c attribute...","{}");
+      Attribute a = new Attribute("a","a","A","A a attribute...");
+      Attribute b = new Attribute("b","b","B","A b attribute...");
+      Attribute c = new Attribute("c","c","B","A c attribute...");
       List all = Arrays.asList(a, b, c);
       List aOnly = Arrays.asList(a);
       List bOnly = Arrays.asList(b, c);

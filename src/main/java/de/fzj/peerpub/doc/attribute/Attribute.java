@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 // validation
 import lombok.NonNull;
+import javax.validation.constraints.NotBlank;
 import de.fzj.peerpub.doc.validator.Referable;
 
 @Data
@@ -33,23 +34,24 @@ public class Attribute {
   /**
    * Display name for this attribute (printed as label).
    */
-  @NonNull
+  @NonNull @NotBlank
   private String label;
   /**
    * A short informative text presented to the user as a helping hand what
    * this attribute is and what to insert.
    */
-  @NonNull
+  @NonNull @NotBlank
   private String description;
   /**
    * A JSON schema that allows the generation of input masks and
    * validation of inserted data
    */
-  @NonNull
-  private String jsonschema;
+  @NonNull @NotBlank
+  private String jsonSchema = "{}";
   public void setJsonSchema(String schema) {
     //TODO: Validation of the provided schema + test
-    this.jsonschema = schema;
+    //      MAYBE LEAVE THIS TO A CUSTOM ANNOTATION + VALIDATOR?
+    this.jsonSchema = schema;
   }
 
   //TODO: Future: add validation methods for data using the schema.
