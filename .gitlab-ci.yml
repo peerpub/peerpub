@@ -1,0 +1,15 @@
+image: maven:3.5-jdk-8
+stages:
+  - build
+  - test
+  - deploy
+
+verify:
+  stage: test
+  script:
+    - echo "Code style testing"
+    - LANG=C mvn validate
+    - echo "Compilation, Unit Tests and PMD and FindBugs static code analysis"
+    - LANG=C mvn verify -DskipIntegrationTests=true
+    - echo "Integration tests"
+    - LANG=C mvn verify -Dpmd.skip=true -Dfindbugs.skip=true
