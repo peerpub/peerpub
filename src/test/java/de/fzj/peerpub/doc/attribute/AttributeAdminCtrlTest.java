@@ -161,6 +161,98 @@ public class AttributeAdminCtrlTest {
   }
 
   // UPDATE
+  @Test
+  void editGetForm() throws Exception {
+    // given
+    Attribute attr = AttributeTest.generate();
+    Optional<Attribute> oAttr = Optional.of(attr);
+    given(attributeRepository.findByName(attr.getName())).willReturn(oAttr);
+    // when
+    ResultActions result = mvc.perform(get("/admin/attributes/edit/{name}",attr.getName()));
+    // then
+    result.andExpect(status().isOk())
+          .andExpect(view().name(AttributeAdminCtrl.ADD))
+          .andExpect(model().attribute(AttributeAdminCtrl.EDIT_ATTR, true))
+          .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr));
+  }
+  @Test
+  void editGetFormNonExistingName() throws Exception {
+    //given
+    String name = "test";
+    given(attributeRepository.findByName(name)).willReturn(Optional.empty());
+    //when
+    ResultActions result = mvc.perform(get("/admin/attributes/edit/{name}",name));
+    //then
+    result.andExpect(status().isFound())
+        .andExpect(flash().attribute("fail", "edit.failed"))
+        .andExpect(redirectedUrl("/admin/attributes"));
+  }
+  @Test
+  void editPostFormSuccess() throws Exception {
+    // given
+    Attribute attr = AttributeTest.generate();
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/attributes/edit/"+attr.getName(), attr));
+    // then
+    result.andExpect(status().isFound())
+          .andExpect(model().hasNoErrors())
+          .andExpect(flash().attribute("success", "edit.success"))
+          .andExpect(redirectedUrl("/admin/attributes"));
+  }
+  @Test
+  void editPostFormInvalidNameKeyError() throws Exception {
+    //given
+    Attribute attr = AttributeTest.generate();
+    // set invalid name!
+    attr.setName("test_ABC +123");
+    attr.setKey("test_ABC +123");
+    //when
+    ResultActions result = mvc.perform(postForm("/admin/attributes/edit/"+attr.getName(),attr));
+    //then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
+        .andExpect(model().hasErrors())
+        .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "name"))
+        .andExpect(model().attributeHasFieldErrorCode(AttributeAdminCtrl.MODEL_ATTR, "name", "Referable"))
+        .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "key"))
+        .andExpect(model().attributeHasFieldErrorCode(AttributeAdminCtrl.MODEL_ATTR, "key", "Referable"));
+  }
+  @Test
+  void editPostFormInvalidBlankError() throws Exception {
+    //given
+    Attribute attr = AttributeTest.generate();
+    // set invalid label, description and jsonschema
+    attr.setLabel("");
+    attr.setDescription("");
+    attr.setJsonSchema("");
+    //when
+    ResultActions result = mvc.perform(postForm("/admin/attributes/edit/"+attr.getName(),attr));
+    //then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
+        .andExpect(model().hasErrors())
+        .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "label"))
+        .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "description"))
+        .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "jsonSchema"));
+  }
+  @Test
+  void editPostFormNameMismatchError() throws Exception {
+    //given
+    Attribute attr = AttributeTest.generate();
+    String requestName = "test";
+    //when
+    ResultActions result = mvc.perform(postForm("/admin/attributes/edit/"+requestName, attr));
+    //then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
+        .andExpect(model().hasErrors())
+        .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "name"))
+        .andExpect(model().attributeHasFieldErrorCode(AttributeAdminCtrl.MODEL_ATTR, "name", "mismatch.name"));
+  }
+
   // DELETE
   @Test
   void deleteSuccess() throws Exception {
@@ -178,7 +270,7 @@ public class AttributeAdminCtrlTest {
           .andExpect(redirectedUrl("/admin/attributes"));
   }
   @Test
-  void deleteInvalidOrNonExistantName() throws Exception {
+  void deleteInvalidOrNonExistingName() throws Exception {
     //given
     String name = "test +ABC";
     willThrow(new MongoException("fault")).given(attributeRepository).deleteById(name);
