@@ -3,6 +3,7 @@ package de.fzj.peerpub.doc.attribute;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 @Controller
 @Validated
+@RequestMapping("/admin/attributes")
 public class AttributeAdminCtrl {
 
   public static final String LIST = "attributeList";
@@ -38,7 +40,7 @@ public class AttributeAdminCtrl {
   /**
    * Read all attributes and list 'em
    */
-  @GetMapping("/admin/attributes")
+  @GetMapping(path={"","/"})
   public String list(ModelMap model) {
     model.addAttribute("attributes", attributeRepository.findAll());
     return LIST;
@@ -47,14 +49,14 @@ public class AttributeAdminCtrl {
   /**
    * Get form to add an attribute
    */
-  @GetMapping("/admin/attributes/add")
+  @GetMapping("/add")
   public String addGetForm() {
     return ADD;
   }
   /**
    * Form handling for action "add" via POST request
    */
-  @PostMapping("/admin/attributes/add")
+  @PostMapping("/add")
   public String addPostForm(ModelMap model,
                             @ModelAttribute(MODEL_ATTR) @Validated Attribute a,
                             BindingResult binding,
@@ -85,7 +87,7 @@ public class AttributeAdminCtrl {
   /**
    * Delete an attribute in the database
    */
-  @GetMapping("/admin/attributes/delete/{name}")
+  @GetMapping("/delete/{name}")
   public String delete(@Referable @PathVariable("name") String name, RedirectAttributes redirectAttr) {
     try {
       attributeRepository.deleteById(name);
