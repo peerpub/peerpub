@@ -9,7 +9,7 @@ verify:
   script:
     - echo "Code style testing"
     - LANG=C mvn validate
-    - echo "Compilation, Unit Tests and PMD and FindBugs static code analysis"
+    - echo "Compilation, Unit Tests and PMD, CPD and FindBugs static code analysis"
     - LANG=C mvn verify -DskipIntegrationTests=true
     - echo "Integration tests"
-    - LANG=C mvn verify -Dpmd.skip=true -Dfindbugs.skip=true
+    - LANG=C mvn verify -Dpmd.skip=true -Dcpd.skip=true -Dfindbugs.skip=true
