@@ -16,8 +16,13 @@
   </parent>
 
   <properties>
+    <!-- build properties -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
+    
+    <!-- versioning properties -->
+    
+    <!-- testing properties -->
     <checkstyle.version>3.0.0</checkstyle.version>
     <checkstyle.allowInvalid>30</checkstyle.allowInvalid>
     <pmd.version>3.9.0</pmd.version>
@@ -302,6 +307,10 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-mongodb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
