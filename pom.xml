@@ -19,13 +19,15 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <checkstyle.version>3.0.0</checkstyle.version>
+    <checkstyle.allowInvalid>30</checkstyle.allowInvalid>
     <pmd.version>3.9.0</pmd.version>
     <findbugs.version>3.0.5</findbugs.version>
     <junit.version>4.12</junit.version>
     <junit.jupiter.version>5.1.0</junit.jupiter.version>
     <junit.vintage.version>5.1.0</junit.vintage.version>
     <junit.platform.version>1.1.0</junit.platform.version>
-    <skipIntegrationTests>false</skipIntegrationTests>
+    <skipUTs>false</skipUTs>
+    <skipITs>false</skipITs>
   </properties>
 
   <build>
@@ -50,7 +52,7 @@
           <consoleOutput>true</consoleOutput>
           <!-- <failsOnError>true</failsOnError> -->
           <failOnViolation>true</failOnViolation>
-          <maxAllowedViolations>30</maxAllowedViolations>
+          <maxAllowedViolations>${checkstyle.allowInvalid}</maxAllowedViolations>
           <linkXRef>false</linkXRef>
         </configuration>
       </plugin>
@@ -116,6 +118,7 @@
         -->
         <version>2.19.1</version>
         <configuration>
+          <skipTests>${skipUTs}</skipTests>
           <includes>
             <include>**/Test*.java</include>
             <include>**/*Test.java</include>
@@ -149,10 +152,10 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>2.19.1</version>
         <configuration>
-          <skipITs>${skipIntegrationTests}</skipITs>
           <additionalClasspathElements>
             <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
           </additionalClasspathElements>
+          <skipITs>${skipITs}</skipITs>
         </configuration>
         <executions>
           <execution>
@@ -198,7 +201,7 @@
           <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failOnViolation>true</failOnViolation>
-          <maxAllowedViolations>30</maxAllowedViolations>
+          <maxAllowedViolations>${checkstyle.allowInvalid}</maxAllowedViolations>
           <linkXRef>false</linkXRef>
         </configuration>
       </plugin>
