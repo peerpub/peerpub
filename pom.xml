@@ -71,7 +71,7 @@
         <configuration>
           <!-- enable incremental analysis -->
           <analysisCache>true</analysisCache>
-          <includeTests>true</includeTests>
+          <!-- <includeTests>true</includeTests> -->
         </configuration>
       </plugin>
       <plugin>
@@ -86,7 +86,7 @@
           </execution>
         </executions>
         <configuration>
-          <includeTests>true</includeTests>
+          <!-- <includeTests>true</includeTests> -->
           <!--
               Enables analysis which takes more memory but finds more bugs.
               If you run out of memory, changes the value of the effort element
