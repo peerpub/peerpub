@@ -1,0 +1,8 @@
+---
+spring:
+  profiles: default
+  mongodb:
+    embedded:
+      # with flapdoodle v2.0.3 no MongoDB 3.6.x can be used
+      # due to incompatible start flags
+      version: 3.4.10
