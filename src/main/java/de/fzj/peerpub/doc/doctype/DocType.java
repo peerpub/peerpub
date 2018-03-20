@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -31,7 +30,7 @@ public class DocType {
    * Will be used as value for "type" within composed metadata documents.
    * BEWARE: the controller will apply restrictions on the content.
    */
-  @Id @Indexed(unique = true) @NonNull private String name;
+  @Id @NonNull private String name;
   /**
    * System types will not be deletable from the UI.
    */

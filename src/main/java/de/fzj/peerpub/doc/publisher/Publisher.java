@@ -34,7 +34,7 @@ public class Publisher {
   /**
    * A unique name used as id
    */
-  @Id @Indexed(unique = true) @NonNull private String name;
+  @Id @NonNull private String name;
 
   /**
    * System publishers will not be deletable from the UI.

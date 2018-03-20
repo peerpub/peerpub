@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 // validation
@@ -24,8 +23,7 @@ public class Attribute {
    * Unique name for this attribute to have definite search results, etc.
    * As it is unique anyway, use it as the _id for MongoDB.
    */
-  @Id @Indexed(unique = true)
-  @NonNull @Referable
+  @Id @NonNull @Referable
   private String name;
   /**
    * The key value, under which the Attribute value will be added to the
