@@ -3,9 +3,15 @@ package de.fzj.peerpub.doc.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Validator for annotation "Referable"
+ */
 public class ReferableValidator implements ConstraintValidator<Referable, String> {
-
-  String regex;
+  
+  /**
+   * Regular expression store
+   */
+  private String regex;
 
   @Override
   public void initialize(Referable paramA) {
@@ -14,12 +20,11 @@ public class ReferableValidator implements ConstraintValidator<Referable, String
 
   @Override
   public boolean isValid(String referableString, ConstraintValidatorContext ctx) {
-    if(referableString == null){
+    // validate attribute names match /^[a-zA-Z0-9\-_]+$/
+    if (referableString == null || !referableString.matches(this.regex)) {
       return false;
     }
-    // validate attribute names match /^[a-zA-Z0-9\-_]+$/
-    if (referableString.matches(this.regex)) return true;
-    else return false;
+    return true;
   }
 
 }

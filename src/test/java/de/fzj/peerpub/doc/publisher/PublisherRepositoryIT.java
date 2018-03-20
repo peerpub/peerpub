@@ -4,31 +4,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 
-import org.bson.Document;
 import org.springframework.data.mongodb.core.query.TextCriteria;
-import com.mongodb.client.MongoCollection;
-import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.fzj.peerpub.utils.Random;
 import de.fzj.peerpub.doc.doctype.*;
 import de.fzj.peerpub.doc.attribute.*;
-import de.fzj.peerpub.doc.publisher.*;
 
-import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Arrays;
 
 @ExtendWith(SpringExtension.class)
@@ -37,18 +27,12 @@ import java.util.Arrays;
 @Tag("integration-embedded")
 public class PublisherRepositoryIT {
 
-    String collectionName;
-    DocType doctype;
-
     @Autowired
     private AttributeRepository attrRepository;
     @Autowired
     private DocTypeRepository docTypeRepository;
     @Autowired
     private PublisherRepository pubRepository;
-
-    @Autowired
-    private MongoOperations mongoops;
 
     @BeforeEach
     void emptyDatabase() {

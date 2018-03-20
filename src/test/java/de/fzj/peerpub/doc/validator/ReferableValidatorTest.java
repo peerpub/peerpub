@@ -1,21 +1,12 @@
 package de.fzj.peerpub.doc.validator;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 
 import de.fzj.peerpub.doc.validator.Referable;
 import de.fzj.peerpub.doc.validator.ReferableValidator;
 
-import java.util.Set;
 import java.lang.reflect.Field;
 
 @Tag("fast")

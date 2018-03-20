@@ -12,10 +12,13 @@ import lombok.NonNull;
 import javax.validation.constraints.NotBlank;
 import de.fzj.peerpub.doc.validator.Referable;
 
+/**
+ * Metadata Attribute Data Transfer Object
+ */
 @Data
 // only compare attributes with its unique name. the rest may be the same or different.
-@EqualsAndHashCode(of={"name"})
-@Document(collection="MetadataAttributes")
+@EqualsAndHashCode(of = {"name"})
+@Document(collection = "MetadataAttributes")
 public class Attribute {
   /**
    * Unique name for this attribute to have definite search results, etc.
@@ -48,9 +51,13 @@ public class Attribute {
    */
   @NonNull @NotBlank
   private String jsonSchema = "{}";
+  
+  /**
+   * Setter for JSON Schema, validating the schema when adding
+   * TODO: MAYBE LEAVE THIS TO A CUSTOM ANNOTATION + VALIDATOR?
+   * @param schema A JSON schema string
+   */
   public void setJsonSchema(String schema) {
-    //TODO: Validation of the provided schema + test
-    //      MAYBE LEAVE THIS TO A CUSTOM ANNOTATION + VALIDATOR?
     this.jsonSchema = schema;
   }
 

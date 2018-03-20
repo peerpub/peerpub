@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.index.TextIndexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 // do not import due to conflicting name with org.bson.Document
 //import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,7 +20,6 @@ import org.bson.Document;
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -30,8 +28,8 @@ import java.util.HashMap;
  */
 @Data
 @AllArgsConstructor
-@EqualsAndHashCode(of={"name"})
-@org.springframework.data.mongodb.core.mapping.Document(collection="Publisher")
+@EqualsAndHashCode(of = {"name"})
+@org.springframework.data.mongodb.core.mapping.Document(collection = "Publisher")
 public class Publisher {
   /**
    * A unique name used as id
@@ -64,7 +62,7 @@ public class Publisher {
    * _id and give them status mandatory or optional plus an default value.
    */
   @Setter(AccessLevel.NONE)
-  @NonNull private Map<String,Map<String,Document>> attributes;
+  @NonNull private Map<String, Map<String, Document>> attributes;
 
   /**
    * Used as value for displaying this publisher in the UI and as
@@ -88,10 +86,10 @@ public class Publisher {
    * @param DocType dt A document type to add.
    */
   public void addSupDocType(@NonNull DocType dt) {
-    if( ! supports.contains(dt.getName())) {
+    if (!supports.contains(dt.getName())) {
       supports.add(dt.getName());
-      if( ! attributes.containsKey(dt.getName())) {
-        Map<String,Document> schema = new HashMap<String,Document>();
+      if (!attributes.containsKey(dt.getName())) {
+        Map<String, Document> schema = new HashMap<>();
         attributes.put(dt.getName(), schema);
       }
     }
@@ -102,10 +100,12 @@ public class Publisher {
    * @param DocType dt A currently supported document type to remove.
    */
   public void removeSupDocType(@NonNull DocType dt) {
-    if(supports.contains(dt.getName()))
+    if (supports.contains(dt.getName())) {
       supports.remove(dt.getName());
-    if(attributes.containsKey(dt.getName()))
+    }
+    if (attributes.containsKey(dt.getName())) {
       attributes.remove(dt.getName());
+    }
   }
 
   /**
@@ -118,14 +118,16 @@ public class Publisher {
   }
 
   public void addAlias(@NonNull String alias) {
-    if( ! this.aliases.contains(alias))
+    if (!this.aliases.contains(alias)) {
       this.aliases.add(alias);
+    }
   }
   public String removeAlias(@NonNull String alias) {
-    if (this.aliases.remove(alias))
+    if (this.aliases.remove(alias)) {
       return alias;
-    else
+    } else {
       return null;
+    }
   }
   public void removeAllAlias() {
     this.aliases.clear();
@@ -134,10 +136,10 @@ public class Publisher {
   private Boolean hasSchema(DocType dt) {
     return this.attributes.containsKey(dt.getName()) && null != this.attributes.get(dt.getName());
   }
-  private Boolean hasDocument(Map<String,Document> schema, String a) {
+  private Boolean hasDocument(Map<String, Document> schema, String a) {
     return schema.containsKey(a) && null != schema.get(a);
   }
-  private Boolean hasDocument(Map<String,Document> schema, Attribute a) {
+  private Boolean hasDocument(Map<String, Document> schema, Attribute a) {
     return hasDocument(schema, a.getName());
   }
 
@@ -150,44 +152,48 @@ public class Publisher {
    * @param String def Give a default value as a convinience for the user. May be null.
    */
   public void putAttribute(@NonNull DocType dt, @NonNull Attribute a, @NonNull Boolean mandatory, String defaultValue) {
-    if(mandatory && (defaultValue == null || defaultValue.isEmpty()))
+    if (mandatory && (defaultValue == null || defaultValue.isEmpty())) {
       throw new IllegalArgumentException("Cannot add a mandatory attribute without a default value");
-    if( ! isSupported(dt))
+    }
+    if (!isSupported(dt)) {
       throw new IllegalArgumentException("Cannot add an attribute to an unsupported document type.");
+    }
 
     // get the schema map for this document type if it exists.
     // else create a new one.
-    Map<String,Document> schema;
-    if(hasSchema(dt))
+    Map<String, Document> schema;
+    if (hasSchema(dt)) {
       schema = this.attributes.get(dt.getName());
-    else
-      schema = new HashMap<String,Document>();
+    } else {
+      schema = new HashMap<>();
+    }
 
     // get the document for this attribute if present, else create one.
     Document doc;
-    if(hasDocument(schema,a))
+    if (hasDocument(schema, a)) {
       doc = schema.get(a.getName());
-    else
+    } else {
       doc = new Document();
+    }
 
     // insert data
-    doc.put(MANDATORY,mandatory);
-    if(defaultValue != null && ! defaultValue.isEmpty())
-      doc.put(DEFAULT,defaultValue);
+    doc.put(MANDATORY, mandatory);
+    if (defaultValue != null && !defaultValue.isEmpty()) {
+      doc.put(DEFAULT, defaultValue);
+    }
     // add/overwrite the document
-    schema.put(a.getName(),doc);
-    // add the schema only if it is not yet present for the doctype!
-    // (overwritting otherwise)
-    if(this.attributes.get(dt.getName()) == null)
-      this.attributes.put(dt.getName(),schema);
+    schema.put(a.getName(), doc);
+    // add the schema only if it is not yet present for the doc type!
+    this.attributes.putIfAbsent(dt.getName(), schema);
   }
 
   public void removeAttribute(@NonNull DocType dt, @NonNull Attribute a) {
-    if(hasSchema(dt)) {
-      Map<String,Document> schema = this.attributes.get(dt.getName());
+    if (hasSchema(dt)) {
+      Map<String, Document> schema = this.attributes.get(dt.getName());
       // don't use hasDocument() here, as the doc could be null
-      if(schema.containsKey(a.getName()))
+      if (schema.containsKey(a.getName())) {
         schema.remove(a.getName());
+      }
     }
   }
 
@@ -200,19 +206,22 @@ public class Publisher {
    * @throws IllegalArgumentException In case of anything is missing (status or attribute)
    */
   public Set<String> getAttributes(@NonNull DocType dt, @NonNull Boolean mandatory, @NonNull Boolean optional) {
-    if(hasSchema(dt)) {
-      Set<String> result = new HashSet<String>();
+    if (hasSchema(dt)) {
+      Set<String> result = new HashSet<>();
       // iterate over the key set
-      for(String aName : this.attributes.get(dt.getName()).keySet()) {
-        if(mandatory && isMandatory(dt, aName))
+      for (String aName : this.attributes.get(dt.getName()).keySet()) {
+        if (mandatory && isMandatory(dt, aName)) {
           result.add(aName);
-        else if (optional && isOptional(dt, aName))
-          result.add(aName);
+        } else {
+          if (optional && isOptional(dt, aName)) {
+            result.add(aName);
+          }
+        }
       }
       return result;
-    }
-    else
+    } else {
       throw new IllegalArgumentException("No schema defined for this document type. Possible data corruption?");
+    }
   }
 
   /**
@@ -221,7 +230,7 @@ public class Publisher {
    * @return A List<String> with the names of the attributes. Another database lookup is needed to get real objects.
    */
   public Set<String> getAttributes(@NonNull DocType dt) {
-    return getAttributes(dt,true,true);
+    return getAttributes(dt, true, true);
   }
 
   /**
@@ -232,18 +241,22 @@ public class Publisher {
    * @throws IllegalArgumentException In case of anything is missing (status or attribute)
    */
   public Boolean isMandatory(@NonNull DocType dt, @NonNull String a) {
-    if(hasSchema(dt)) {
-      Map<String,Document> schema = this.attributes.get(dt.getName());
-      if(hasDocument(schema,a)) {
+    if (hasSchema(dt)) {
+      Map<String, Document> schema = this.attributes.get(dt.getName());
+      if (hasDocument(schema, a)) {
         Document d = schema.get(a);
-        if(d.containsKey(MANDATORY) && d.get(MANDATORY) != null)
-          return ((Boolean)d.get(MANDATORY));
-        else
-          throw new IllegalArgumentException("The mandatory status has not been defined for attribute "+a+" on this document type.");
-      } else
-        throw new IllegalArgumentException("Attribute "+a+" is not defined for this document type.");
-    } else
+        if (d.containsKey(MANDATORY) && d.get(MANDATORY) != null) {
+          return (Boolean) d.get(MANDATORY);
+        } else {
+          throw new IllegalArgumentException("The mandatory status has not been defined for attribute " + a
+                                             + " on this document type.");
+        }
+      } else {
+        throw new IllegalArgumentException("Attribute " + a + " is not defined for this document type.");
+      }
+    } else {
       throw new IllegalArgumentException("No schema defined for this document type. Possible data corruption?");
+    }
   }
 
   /**
@@ -265,7 +278,7 @@ public class Publisher {
    * @throws IllegalArgumentException In case of anything is missing (status or attribute)
    */
   public Boolean isOptional(@NonNull DocType dt, @NonNull Attribute a) {
-    return (!isMandatory(dt,a));
+    return !isMandatory(dt, a);
   }
 
   /**
@@ -276,7 +289,7 @@ public class Publisher {
    * @throws IllegalArgumentException In case of anything is missing (status or attribute)
    */
   public Boolean isOptional(@NonNull DocType dt, @NonNull String a) {
-    return (!isMandatory(dt,a));
+    return !isMandatory(dt, a);
   }
 
   /**
@@ -287,18 +300,21 @@ public class Publisher {
    * @throws IllegalArgumentException In case if the attribute is not defined.
    */
   public String getDefault(@NonNull DocType dt, @NonNull Attribute a) {
-    if(hasSchema(dt)) {
-      Map<String,Document> schema = this.attributes.get(dt.getName());
-      if(hasDocument(schema,a)) {
+    if (hasSchema(dt)) {
+      Map<String, Document> schema = this.attributes.get(dt.getName());
+      if (hasDocument(schema, a)) {
         Document d = schema.get(a.getName());
-        if(d.containsKey(DEFAULT) && d.get(DEFAULT) != null)
-          return ((String)schema.get(a.getName()).get(DEFAULT));
-        else
+        if (d.containsKey(DEFAULT) && d.get(DEFAULT) != null) {
+          return (String) schema.get(a.getName()).get(DEFAULT);
+        } else {
           return "";
-      } else
-        throw new IllegalArgumentException("Attribute "+a.getName()+" is not defined for this document type.");
-    } else
+        }
+      } else {
+        throw new IllegalArgumentException("Attribute " + a.getName() + " is not defined for this document type.");
+      }
+    } else {
       throw new IllegalArgumentException("No schema defined for this document type. Possible data corruption?");
+    }
   }
 
   /**
@@ -307,19 +323,24 @@ public class Publisher {
    * a more verbose look, especially for testing.
    */
   public boolean equalsDeep(Object o) {
-    if(this.equals(o)) {
-      Publisher oP = (Publisher)o;
-      if(oP.getSystem() != this.getSystem() || oP.getReviewing() != this.getReviewing())
+    if (this.equals(o)) {
+      Publisher oP = (Publisher) o;
+      if (!oP.getSystem().equals(this.getSystem())
+          || !oP.getReviewing().equals(this.getReviewing())) {
         return false;
-      if( ! this.getSupports().equals(oP.getSupports()))
+      }
+      if (!this.getSupports().equals(oP.getSupports())) {
         return false;
-      if( ! this.getAttributes().equals(oP.getAttributes()))
+      }
+      if (!this.getAttributes().equals(oP.getAttributes())) {
         return false;
-      if( ! this.getDisplayName().equals(oP.getDisplayName()) ||
-          ! this.getAliases().equals(oP.getAliases()))
+      }
+      if (!this.getDisplayName().equals(oP.getDisplayName())
+          || !this.getAliases().equals(oP.getAliases())) {
         return false;
+      }
       return true;
-    } else
-      return false;
+    }
+    return false;
   }
 }

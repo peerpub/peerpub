@@ -1,7 +1,5 @@
 package de.fzj.peerpub.doc.attribute;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,27 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
-import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.http.MediaType;
 
 import com.mongodb.MongoException;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.*;
+import static io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.postForm;
 
 import java.util.List;
 import java.util.Optional;
-
-import de.fzj.peerpub.doc.attribute.*;
-import de.fzj.peerpub.log.*;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("medium")

@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.ui.ModelMap;
@@ -12,39 +11,40 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 
-import de.fzj.peerpub.doc.attribute.AttributeRepository;
-import de.fzj.peerpub.doc.attribute.Attribute;
-import de.fzj.peerpub.log.*;
 import de.fzj.peerpub.doc.validator.Referable;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ * Spring Controller for administration pages of metadata attributes.
+ */
 @Controller
 @Validated
 @RequestMapping("/admin/attributes")
 public class AttributeAdminCtrl {
 
-  public static final String LIST = "attributeList";
-  public static final String ADD = "attributeAdd";
+  static final String LIST = "attributeList";
+  static final String ADD = "attributeAdd";
   // reuse add instead with some parameters, so it differs while viewing
   // and gets loaded with data from the database...
-  // public static final String EDIT = "attributeEdit";
-  public static final String DELETE = "attributeDelete";
-  public static final String MODEL_ATTR = "attribute";
-  public static final String EDIT_ATTR = "edit";
+  // static final String EDIT = "attributeEdit";
+  static final String DELETE = "attributeDelete";
+  static final String MODEL_ATTR = "attribute";
+  static final String EDIT_ATTR = "edit";
 
+  /**
+   * Metadata attribute DAO (using directly, not using unnecessary service layer)
+   */
   @Autowired
-  AttributeRepository attributeRepository;
+  private AttributeRepository attributeRepository;
 
   /**
    * Read all attributes and list 'em
+   * @return View name
    */
-  @GetMapping(path={"","/"})
+  @GetMapping(path = {"", "/"})
   public String list(ModelMap model) {
     model.addAttribute("attributes", attributeRepository.findAll());
     return LIST;
@@ -52,6 +52,7 @@ public class AttributeAdminCtrl {
 
   /**
    * Get form to add an attribute
+   * @return View name
    */
   @GetMapping("/add")
   public String addGetForm() {
@@ -59,6 +60,8 @@ public class AttributeAdminCtrl {
   }
   /**
    * Form handling for action "add" via POST request
+   * @param a The attribute after data binding from the request
+   * @return View name if failing or redirect to attribute list on success
    */
   @PostMapping("/add")
   public String addPostForm(ModelMap model,
@@ -71,7 +74,7 @@ public class AttributeAdminCtrl {
     }
     // reject if entity with same name present in the database
     if (attributeRepository.findByName(a.getName()).isPresent()) {
-      binding.rejectValue("name","duplicate.name","Name already in use!");
+      binding.rejectValue("name", "duplicate.name", "Name already in use!");
       return ADD;
     }
     // try to save attribute to database
@@ -90,13 +93,13 @@ public class AttributeAdminCtrl {
   
   /**
    * Get edit form.
-   * @param model Spring Model
    * @param name The name of the attribute to be edited (retrieve from database)
-   * @param redirectAttr Spring Redirect Attributes
    * @return View name or redirect to list of attributes
    */
   @GetMapping("/edit/{name}")
-  public String editGetForm(ModelMap model, @Referable @PathVariable("name") String name, RedirectAttributes redirectAttr) {
+  public String editGetForm(ModelMap model,
+                            @Referable @PathVariable("name") String name,
+                            RedirectAttributes redirectAttr) {
     // try to save attribute to database
     try {
       Optional<Attribute> oa =  attributeRepository.findByName(name);
@@ -104,10 +107,11 @@ public class AttributeAdminCtrl {
         model.addAttribute(EDIT_ATTR, true);
         model.addAttribute(MODEL_ATTR, oa.get());
         return ADD;
-      } else
-        throw new Exception("edit.notfound");
+      } else {
+        throw new RuntimeException("edit.notfound");
+      }
     // present any error to the user
-    } catch (Exception e) {
+    } catch (RuntimeException e) {
       // TODO: log this exception
       redirectAttr.addFlashAttribute("fail", "edit.failed");
       return "redirect:/admin/attributes";
@@ -116,10 +120,8 @@ public class AttributeAdminCtrl {
   
   /**
    * Form handling for action "edit" via POST request
-   * @param model Spring Model
    * @param name The name of the attribute to be edited
    * @param a Data binded attribute value to be inserted into database.
-   * @param redirectAttr Spring Redirect Attributes
    * @return View name or redirect to list of attributes
    */
   @PostMapping("/edit/{name}")
@@ -134,8 +136,8 @@ public class AttributeAdminCtrl {
       return ADD;
     }
     // reject if name parameter and model do NOT match
-    if (! name.equals(a.getName())) {
-      binding.rejectValue("name","mismatch.name","Name parameter and model name do not match!");
+    if (!name.equals(a.getName())) {
+      binding.rejectValue("name", "mismatch.name", "Name parameter and model name do not match!");
       model.addAttribute(EDIT_ATTR, true);
       return ADD;
     }
@@ -156,13 +158,15 @@ public class AttributeAdminCtrl {
 
   /**
    * Delete an attribute in the database
+   * @param name Path variable with the attribute name
+   * @return Redirection to list of attributes
    */
   @GetMapping("/delete/{name}")
   public String delete(@Referable @PathVariable("name") String name, RedirectAttributes redirectAttr) {
     try {
       attributeRepository.deleteById(name);
       redirectAttr.addFlashAttribute("success", "delete.success");
-    } catch(Exception e) {
+    } catch (Exception e) {
       // TODO: log this exception
       redirectAttr.addFlashAttribute("fail", "delete.failed");
     }

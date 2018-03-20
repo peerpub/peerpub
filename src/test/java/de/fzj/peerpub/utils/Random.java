@@ -1,7 +1,6 @@
 package de.fzj.peerpub.utils;
 
 import java.security.SecureRandom;
-import java.lang.StringBuilder;
 
 public class Random {
   static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

@@ -9,7 +9,7 @@ package doc.attribute {
     -key: String
     -label: String
     -description: String
-    -jsonschema: String
+    -jsonSchema: String
   }
 
   AttributeRepository .> Attribute
@@ -22,11 +22,10 @@ package doc.attribute {
   Attribute <- AttributeAdminCtrl
   class AttributeAdminCtrl {
     +list()
-    +listJson()
     +addGetForm()
     +addPostForm()
-    +updateGetForm()
-    +updatePostForm()
+    +editGetForm()
+    +editPostForm()
     +delete()
   }
 }

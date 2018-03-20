@@ -9,9 +9,13 @@ import java.lang.annotation.RetentionPolicy;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+/**
+ * Custom annotation to validate referable names. Restricting to /^[a-zA-Z0-9\-_]+$/
+ * leaves readable names within MongoDB and allows easy references (DBRef not usable everywhere)
+ */
 @Documented
 @Constraint(validatedBy = ReferableValidator.class)
-@Target( { ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Referable {
     String message() default "{referable.notmatching}";
