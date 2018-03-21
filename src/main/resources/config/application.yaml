@@ -3,6 +3,7 @@ spring:
   profiles: default
   mongodb:
     embedded:
-      # with flapdoodle v2.0.3 no MongoDB 3.6.x can be used
-      # due to incompatible start flags
-      version: 3.4.10
+      version: 3.6.3
+      # this should be removed once the upstream bug is resolved.
+      # see https://github.com/spring-projects/spring-boot/issues/12575
+      features: sync_delay,no_http_interface_arg
