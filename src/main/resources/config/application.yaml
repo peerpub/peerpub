@@ -1,6 +1,9 @@
 ---
 spring:
   profiles: default
+  messages:
+    basename:
+      "i18n/messages"
   data:
     mongodb:
       host: localhost
@@ -9,6 +12,9 @@ spring:
 ---
 spring:
   profiles: docker
+  messages:
+    basename:
+      "i18n/messages"
   data:
     mongodb:
       host: mongodb
