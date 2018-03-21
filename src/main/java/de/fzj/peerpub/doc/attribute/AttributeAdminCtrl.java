@@ -25,12 +25,12 @@ import java.util.Optional;
 @RequestMapping("/admin/attributes")
 public class AttributeAdminCtrl {
 
-  static final String LIST = "attributeList";
-  static final String ADD = "attributeAdd";
+  static final String LIST = "doc/attribute/list";
+  static final String ADD = "doc/attribute/add";
   // reuse add instead with some parameters, so it differs while viewing
   // and gets loaded with data from the database...
   // static final String EDIT = "attributeEdit";
-  static final String DELETE = "attributeDelete";
+  static final String DELETE = "doc/attribute/delete";
   static final String MODEL_ATTR = "attribute";
   static final String EDIT_ATTR = "edit";
 
@@ -44,7 +44,7 @@ public class AttributeAdminCtrl {
    * Read all attributes and list 'em
    * @return View name
    */
-  @GetMapping(path = {"", "/"})
+  @GetMapping(path = {"", "/", "/list"})
   public String list(ModelMap model) {
     model.addAttribute("attributes", attributeRepository.findAll());
     return LIST;
