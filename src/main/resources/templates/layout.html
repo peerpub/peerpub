@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="htmlhead">
+  <meta charset="UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta name="description" content="PeerPub">
+  <meta name="author" content="Forschungszentrum Jülich GmbH">
+  <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.png}">
+  <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/css/peerpub.css}" rel="stylesheet">
+  
+  <title th:text="${title} ? ${title}+' :: '+#{brand.name} : #{brand.name}">Standard Layout Prototype</title>
+</head>
+<body>
+  <header th:fragment="header">
+    <nav th:replace="navigation :: navigation"></nav>
+  </header>
+  <main class="container">
+    Content goes here...
+  </main>
+  <footer th:fragment="footer" class="footer">
+    <div class="container">
+      <span class="text-muted credit">
+          &copy; <span>2018</span> <span th:text="#{brand.author}">author</span>
+      </span>
+    </div>
+    <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+    <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+  </footer>
+</body>
+</html>
