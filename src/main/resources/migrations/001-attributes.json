@@ -1,0 +1,92 @@
+{
+  "MetadataAttributes": [
+    {
+      "_id": "doi",
+      "key": "doi",
+      "label": "DOI",
+      "description": "A DOI is a Digital Object Identifier and contains a persistent, resolvable identifier for a document.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "isbn",
+      "key": "isbn",
+      "label": "ISBN",
+      "description": "Please provide a valid ISBN for this document.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "issn",
+      "key": "issn",
+      "label": "ISSN",
+      "description": "A ISSN is a unique identifier for grey literature and easily provides a reference to journals, etc.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "issue",
+      "key": "issue",
+      "label": "Issue",
+      "description": "Please provide the issue number or a special issue title.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "issued",
+      "key": "issued",
+      "label": "Date of publishing",
+      "description": "Please insert the date this document has been or is going to be issued/released to the public.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "number-of-pages",
+      "key": "number-of-pages",
+      "label": "No. pages",
+      "description": "Provide the number of pages this document contains.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "page-first",
+      "key": "page-first",
+      "label": "First page no.",
+      "description": "Please provide the page number where to find first page of your document within the journal or other media.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "publisher-house",
+      "key": "publisher-house",
+      "label": "Publisher",
+      "description": "Useful if you want to specify the name of the publisher releasing the journal, book, etc.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "publisher-place",
+      "key": "publisher-place",
+      "label": "Publisher location",
+      "description": "Where is the publisher located?",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "url",
+      "key": "url",
+      "label": "URL",
+      "description": "Please provide a valid URL to the location of the released document.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "volume",
+      "key": "volume",
+      "label": "Volume",
+      "description": "Journals and other media often are released in volumes. Please provide the volume number.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    }
+  ]
+}
