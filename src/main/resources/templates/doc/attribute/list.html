@@ -5,9 +5,47 @@
 <body>
   <header th:replace="layout :: header">Top navigation goes here</header>
   <main class="container">
-    <div class="attribute-list">
-      TODO: list all metadata attributes within the database.<br/>
-      TODO: add a link to the "add new" form
+    <h1 class="mt-3">[[#{admin.attribute.list}]]</h1>
+    <!-- deletion modal -->
+    <div th:replace="modals/delete :: modal"></div>
+    
+    <!-- list of metadata attributes -->
+    <div id="attribute-list">
+      <!-- "add" link -->
+      <div class="card card-header">
+        <a class="btn btn-link text-right" href="#"
+           th:href="${#mvc.url('AAC#addGetForm').build()}">
+          [[#{add}]] <i class="fas fa-plus-circle"></i>
+        </a>
+      </div>
+      <!-- actual list -->
+      <div class="card" th:each="attribute : ${attributes}">
+        <div class="card-header" th:id="${attribute.name}">
+          <button class="btn btn-link" data-toggle="collapse" th:data-target="'#attr-'+${attribute.name}"
+                  aria-expanded="true" th:aria-controls="'attr-'+${attribute.name}">
+            [[${attribute.label}]] <span class="small" style="display: inline-block">([[${attribute.name}]])</span>
+          </button>
+          <a class="text-danger btn btn-link float-right delete" href="#delete"
+             data-toggle="modal" th:data-name="${attribute.name}" th:data-action="${#mvc.url('AAC#delete').arg(0,attribute.name).build()}">
+            [[#{delete}]] <i class="fas fa-trash"></i>
+          </a>
+          <a class="btn btn-link float-right" href="#"
+             th:href="${#mvc.url('AAC#editGetForm').arg(1,attribute.name).build()}">
+            [[#{edit}]] <i class="fas fa-pencil-alt"></i>
+          </a>
+        </div>
+        <div th:id="'attr-'+${attribute.name}" class="collapse" th:aria-labelledby="${attribute.name}" data-parent="#attribute-list">
+          <div class="card-body">
+            <ul class="list-group">
+              <li class="list-group-item">[[#{name}]]: "[[${attribute.name}]]"</li>
+              <li class="list-group-item">[[#{key}]]: "[[${attribute.key}]]"</li>
+              <li class="list-group-item">[[#{label}]]: "[[${attribute.label}]]"</li>
+              <li class="list-group-item">[[#{description}]]: "[[${attribute.description}]]"</li>
+              <li class="list-group-item">JSON Schema: <code>[[${attribute.jsonSchema}]]</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
   <footer th:replace="layout :: footer">Footer goes here</footer>
