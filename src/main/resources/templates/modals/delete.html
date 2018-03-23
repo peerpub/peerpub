@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+  <div th:fragment="modal" class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="deleteModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger" id="deleteModalTitle">[[#{delete.confirm.header}]]</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Cancel">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          [[#{delete.confirm.text}]]
+          <div class="text-center">
+            <div id="delete-name" class="text-danger">attribute.name</div>
+            <input id="delete-confirm" type="text"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <form id="delete-form" action="" method="get">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-danger" id="delete-button">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
