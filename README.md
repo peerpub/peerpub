@@ -1,3 +1,4 @@
+![PeerPub Logo](doc/peerpub.png)
 # PeerPub
 
 [![pipeline status](https://src.ipp.kfa-juelich.de/it/peerpub/badges/development/pipeline.svg)](https://src.ipp.kfa-juelich.de/it/peerpub/commits/development)
@@ -24,9 +25,14 @@ Independent from the way you will provide it, please notice the following servic
 need to be in place before starting the web app:
 
 1. MongoDB v3.6 or newer (used for the data)
-2. ~~MySQL 5.6 or later~~ (not yet in use, might get used for BPM platform if not
-   substituted by H2)
-3. Tomcat Server (vX.X?) with OpenJDK 8 or newer
+2. H2 SQL database for the Camunda BPM process engine
+   (so by default no further SQL service needs to be provided by you!)
+3. optional: Tomcat Server (vX.X?) with OpenJDK 8 or newer
+   (or just use some init system together with the JAR package or
+   Docker containers, see below)
+
+Please also read the [notes on data persistance](doc/database.md)
+carefully.
 
 ## Quick demo instance
 
