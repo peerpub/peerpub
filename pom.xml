@@ -175,6 +175,30 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.24.0</version>
+        <configuration>
+          <images>
+            <image>
+              <name>peerpub:app</name>
+              <alias>app</alias>
+              <build>
+                <!-- filter>@</filter-->
+                <assembly>
+                  <descriptorRef>artifact</descriptorRef>
+                </assembly>
+                <from>openjdk:8-jdk-alpine</from>
+                <cmd>java -jar -Dspring.profiles.active=docker maven/${project.build.finalName}.jar</cmd>
+              </build>
+              <run>
+                <skip>true</skip>
+              </run>
+            </image>
+          </images>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -284,6 +308,11 @@
       <artifactId>lombok</artifactId>
       <version>1.16.20</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

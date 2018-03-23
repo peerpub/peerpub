@@ -7,3 +7,11 @@ spring:
       # this should be removed once the upstream bug is resolved.
       # see https://github.com/spring-projects/spring-boot/issues/12575
       features: sync_delay,no_http_interface_arg
+---
+spring:
+  profiles: docker
+  data:
+    mongodb:
+      host: mongodb
+      port: 27017
+      database: peerpub
