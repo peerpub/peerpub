@@ -9,6 +9,10 @@
     <!-- deletion modal -->
     <div th:replace="modals/delete :: modal"></div>
     
+    <!-- alerts -->
+    <div class="alert alert-success" role="alert" th:if="${success}" th:text="#{${success}}">SUCCESS</div>
+    <div class="alert alert-danger" role="alert" th:if="${fail}" th:text="#{${fail}}">FAILED</div>
+    
     <!-- list of metadata attributes -->
     <div id="attribute-list">
       <!-- "add" link -->
