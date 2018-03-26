@@ -83,6 +83,8 @@ public class AttributeAdminCtrlTest {
     ResultActions result = mvc.perform(get("/admin/attributes/add"));
     // then
     result.andExpect(status().isOk())
+          .andExpect(model().hasNoErrors())
+          .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, new Attribute()))
           .andExpect(view().name(AttributeAdminCtrl.ADD));
   }
   @Test

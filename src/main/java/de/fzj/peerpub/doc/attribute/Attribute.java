@@ -2,6 +2,8 @@ package de.fzj.peerpub.doc.attribute;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,6 +19,8 @@ import de.fzj.peerpub.doc.validator.Referable;
 @Data
 // only compare attributes with its unique name. the rest may be the same or different.
 @EqualsAndHashCode(of = {"name"})
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Document(collection = "MetadataAttributes")
 public class Attribute {
   /**

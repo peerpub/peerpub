@@ -26,7 +26,7 @@ import java.util.Optional;
 public class AttributeAdminCtrl {
 
   static final String LIST = "doc/attribute/list";
-  static final String ADD = "doc/attribute/add";
+  static final String ADD = "doc/attribute/addedit";
   // reuse add instead with some parameters, so it differs while viewing
   // and gets loaded with data from the database...
   // static final String EDIT = "attributeEdit";
@@ -55,7 +55,8 @@ public class AttributeAdminCtrl {
    * @return View name
    */
   @GetMapping("/add")
-  public String addGetForm() {
+  public String addGetForm(ModelMap model) {
+    model.addAttribute(MODEL_ATTR, new Attribute());
     return ADD;
   }
   /**
@@ -64,8 +65,7 @@ public class AttributeAdminCtrl {
    * @return View name if failing or redirect to attribute list on success
    */
   @PostMapping("/add")
-  public String addPostForm(ModelMap model,
-                            @ModelAttribute(MODEL_ATTR) @Validated Attribute a,
+  public String addPostForm(@ModelAttribute(MODEL_ATTR) @Validated Attribute a,
                             BindingResult binding,
                             RedirectAttributes redirectAttr) {
     // validation errors: let the user edit and try again
