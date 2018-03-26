@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mock;
 import org.mockito.InjectMocks;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -149,6 +151,20 @@ public class AttributeAdminCtrlTest {
           .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "description"))
           .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "jsonSchema"));
   }
+  
+  @Test
+  void addPostFormPersistenceError() throws Exception {
+    //given
+    Attribute attr = AttributeTest.generate();
+    given(attributeRepository.save(attr)).willThrow(RuntimeException.class);
+    //when
+    ResultActions result = mvc.perform(postForm("/admin/attributes/add",attr));
+    //then
+    result.andExpect(status().isOk())
+          .andExpect(view().name(AttributeAdminCtrl.ADD))
+          .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
+          .andExpect(model().hasErrors());
+  }
 
   // UPDATE
   @Test
@@ -201,6 +217,7 @@ public class AttributeAdminCtrlTest {
     //then
     result.andExpect(status().isOk())
         .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.EDIT_ATTR, true))
         .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
         .andExpect(model().hasErrors())
         .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "name"))
@@ -221,6 +238,7 @@ public class AttributeAdminCtrlTest {
     //then
     result.andExpect(status().isOk())
         .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.EDIT_ATTR, true))
         .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
         .andExpect(model().hasErrors())
         .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "label"))
@@ -237,10 +255,25 @@ public class AttributeAdminCtrlTest {
     //then
     result.andExpect(status().isOk())
         .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.EDIT_ATTR, true))
         .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
         .andExpect(model().hasErrors())
         .andExpect(model().attributeHasFieldErrors(AttributeAdminCtrl.MODEL_ATTR, "name"))
         .andExpect(model().attributeHasFieldErrorCode(AttributeAdminCtrl.MODEL_ATTR, "name", "mismatch.name"));
+  }
+  @Test
+  void editPostFormPersistenceError() throws Exception {
+    //given
+    Attribute attr = AttributeTest.generate();
+    given(attributeRepository.save(attr)).willThrow(RuntimeException.class);
+    //when
+    ResultActions result = mvc.perform(postForm("/admin/attributes/edit/"+attr.getName(),attr));
+    //then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(AttributeAdminCtrl.ADD))
+        .andExpect(model().attribute(AttributeAdminCtrl.EDIT_ATTR, true))
+        .andExpect(model().attribute(AttributeAdminCtrl.MODEL_ATTR, attr))
+        .andExpect(model().hasErrors());
   }
 
   // DELETE
