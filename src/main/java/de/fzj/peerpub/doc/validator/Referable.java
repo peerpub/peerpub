@@ -18,7 +18,7 @@ import javax.validation.Payload;
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Referable {
-    String message() default "{referable.notmatching}";
+    String message() default "{Referable.notmatching}";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
     String allowedRegex() default "^[a-zA-Z0-9\\-_]+$";

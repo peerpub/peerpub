@@ -3,7 +3,7 @@ spring:
   profiles: test
   messages:
     basename:
-      "i18n/messages"
+      "i18n/messages,i18n/validation"
   mongodb:
     embedded:
       version: 3.6.3
