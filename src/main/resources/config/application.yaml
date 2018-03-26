@@ -8,20 +8,6 @@ spring:
       database: peerpub
 ---
 spring:
-  profiles: test
-  mongodb:
-    embedded:
-      version: 3.6.3
-      # this should be removed once the upstream bug is resolved.
-      # see https://github.com/spring-projects/spring-boot/issues/12575
-      features: sync_delay,no_http_interface_arg
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: test
----
-spring:
   profiles: docker
   data:
     mongodb:
