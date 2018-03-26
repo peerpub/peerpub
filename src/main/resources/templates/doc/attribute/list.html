@@ -20,10 +20,10 @@
       </div>
       <!-- actual list -->
       <div class="card" th:each="attribute : ${attributes}">
-        <div class="card-header" th:id="${attribute.name}">
-          <button class="btn btn-link" data-toggle="collapse" th:data-target="'#attr-'+${attribute.name}"
-                  aria-expanded="true" th:aria-controls="'attr-'+${attribute.name}">
-            [[${attribute.label}]] <span class="small" style="display: inline-block">([[${attribute.name}]])</span>
+        <div class="card-header accordion" th:id="${attribute.name}">
+          <button class="btn btn-link collapsed" data-toggle="collapse" th:data-target="'#attr-'+${attribute.name}"
+                  aria-expanded="false" th:aria-controls="'attr-'+${attribute.name}">
+            <i class="arrow fas fa-angle-right"></i> [[${attribute.label}]] <span class="small">([[${attribute.name}]])</span>
           </button>
           <a class="text-danger btn btn-link float-right delete" href="#delete"
              data-toggle="modal" th:data-name="${attribute.name}" th:data-action="${#mvc.url('AAC#delete').arg(0,attribute.name).build()}">
