@@ -1,9 +1,7 @@
 package de.fzj.peerpub.config;
 
-import com.mongodb.client.MongoCollection;
 import de.fzj.peerpub.doc.attribute.Attribute;
 import de.fzj.peerpub.doc.attribute.AttributeRepository;
-import org.bson.Document;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +17,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
 @DataMongoTest
 @ActiveProfiles("test")
 @Tag("integration-embedded")

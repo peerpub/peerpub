@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.fzj.peerpub.doc.attribute.*;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
 @DataMongoTest
 @ActiveProfiles("test")
 @Tag("integration-embedded")

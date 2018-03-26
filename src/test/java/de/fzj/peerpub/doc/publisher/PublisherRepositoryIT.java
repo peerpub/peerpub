@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Arrays;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
 @DataMongoTest
 @ActiveProfiles("test")
 @Tag("integration-embedded")

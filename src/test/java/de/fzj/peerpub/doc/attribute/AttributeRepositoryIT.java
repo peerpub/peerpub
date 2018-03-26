@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
 @DataMongoTest
 @ActiveProfiles("test")
 @Tag("integration-embedded")
