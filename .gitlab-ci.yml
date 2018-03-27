@@ -8,10 +8,11 @@ variables:
   #MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
-# Cache downloaded dependencies and plugins between builds.
-# To keep cache across branches add 'key: "$CI_JOB_REF_NAME"'
+# Cache downloaded dependencies and plugins between builds across all branches and jobs.
+# As the maven repo is handling different lib version pretty well, this should be
+# alright. Also this makes merge request not have a slow start because of cold cache.
 cache:
-  key: "$CI_JOB_REF_NAME"
+  key: "peerpub-ci-maven-cache"
   paths:
     - .m2/repository
 
@@ -23,26 +24,29 @@ stages:
   - integration
   - deploy
 
-validate:
+compile:
   stage: build
+  artifacts:
+    name: "target"
+    paths:
+      - "target"
+    expire_in: 1 week
   script:
-    - echo "Code style validation and compile source and tests"
+    # will run validation with CheckStyle and compile all classes
     - LANG=C mvn ${MAVEN_CLI_OPTS} test-compile
 
 unit-testing:
   stage: unit
   script:
-    - echo "Unit tests"
     - LANG=C mvn ${MAVEN_CLI_OPTS} test
 
 analysation:
   stage: analyse
   script:
-    - echo "PMD, CPD and FindBugs static code analysis"
+    # run PMD, CPD and FindBugs
     - LANG=C mvn ${MAVEN_CLI_OPTS} verify -DskipTests
 
 integration-testing:
   stage: integration
   script:
-    - echo "Integration tests"
     - LANG=C mvn ${MAVEN_CLI_OPTS} verify -DskipUTs -Dpmd.skip=true -Dcpd.skip=true -Dfindbugs.skip=true
