@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.fzj.peerpub.doc.attribute.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @ExtendWith(SpringExtension.class)
 @DataMongoTest
 @ActiveProfiles("test")
@@ -39,9 +42,10 @@ public class DocTypeRepositoryIT {
       assertNotNull(attrRepository);
       assertNotNull(docTypeRepository);
 
-      DocType dt = DocTypeTest.generate();
+      List<Attribute> attrs = AttributeTest.generate(2);
+      DocType dt = DocTypeTest.generate(attrs);
       // this is needed as we delete anything in MetadataAttributes before each test...
-      attrRepository.saveAll(dt.getAttributes());
+      attrRepository.saveAll(attrs);
       docTypeRepository.save(dt);
 
       /*
@@ -51,13 +55,7 @@ public class DocTypeRepositoryIT {
       */
 
       String dtName = dt.getName();
-      DocType dt2 = docTypeRepository.findByName(dtName);
-      assertEquals(dt,dt2);
-      assertEquals(dt.getName(), dt2.getName());
-      assertEquals(dt.getSystem(), dt2.getSystem());
-      assertEquals(dt.getMultidoc(), dt2.getMultidoc());
-      assertEquals(dt.getAttributes(), dt2.getAttributes());
-      assertEquals(dt.getMandatory(), dt2.getMandatory());
-      assertEquals(dt.getDefaults(), dt2.getDefaults());
+      Optional<DocType> odt2 = docTypeRepository.findByName(dtName);
+      assertTrue(dt.equalsDeep(odt2.get()));
     }
 }
