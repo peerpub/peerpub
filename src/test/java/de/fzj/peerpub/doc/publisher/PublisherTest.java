@@ -76,11 +76,11 @@ public class PublisherTest {
     // test if we can get all attributes correctly
     Set<String> pubAttrsDt1 = pubLocal.getAttributes(dts.get(0));
     assertEquals(pubAttrsDt1, pubLocal.getAttributes().get(dts.get(0).getName()).keySet());
-}
-
-@Test
-@DisplayName("model.doc.Publisher getAttributes(doctype, mand, opt) should return attributes dependant on selection criteria")
-void getAttributesSelective() {
+  }
+  
+  @Test
+  @DisplayName("model.doc.Publisher getAttributes(doctype, mand, opt) should return attributes dependant on selection criteria")
+  void getAttributesSelective() {
     // generate a defined test data set first
     List<DocType> dts = DocTypeTest.generate(2);
     DocType dt = dts.get(0);
