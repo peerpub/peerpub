@@ -1,119 +1,154 @@
 package de.fzj.peerpub.doc.doctype;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.bson.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import de.fzj.peerpub.doc.attribute.*;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
+
 import de.fzj.peerpub.utils.Random;
 
 @Tag("fast")
 public class DocTypeTest {
-  DocType dt;
-
-  @BeforeEach void setup() {
-    this.dt = generate();
-  }
-
+ 
   @Test
-  @DisplayName("model.doc.DocType putAttribute() should fail if no default for mandatory attribute")
-  void failNoDefaultForMandatory() {
-    Attribute attr = AttributeTest.generate();
-    assertThrows(IllegalArgumentException.class,
-                 () -> {dt.putAttribute(attr, true, null);});
-    assertThrows(IllegalArgumentException.class,
-                 () -> {dt.putAttribute(attr, true, "");});
+  @DisplayName("getAttributes() should return all attributes")
+  void getAttributes() {
+    // given
+    List<Attribute> attrs = AttributeTest.generate(1);
+    DocType dt = DocTypeTest.generate(Collections.emptyList());
+  
+    // (when)
+    Set<String> attrSet = new HashSet<>();
+    for (Attribute a : attrs) {
+      attrSet.add(a.getName());
+      dt.putAttribute(a, Random.getBool(), "");
+    }
+    
+    // then
+    // test if we can get all attributes correctly
+    assertEquals(attrSet, dt.getAttributes());
   }
-
+  
   @Test
+  @DisplayName("getAttributes(mand, opt) should return attributes dependant on selection criteria")
+  void getAttributesSelective() {
+    // given
+    DocType dt = DocTypeTest.generate(Collections.emptyList());
+    Attribute aMand = AttributeTest.generate();
+    Attribute aMandND = AttributeTest.generate();
+    Attribute aOpt = AttributeTest.generate();
+    Attribute aOptND = AttributeTest.generate();
+  
+    // when
+    dt.putAttribute(aMand, true, "test");
+    dt.putAttribute(aMandND, true, "");
+    dt.putAttribute(aOpt, false, "test");
+    dt.putAttribute(aOptND, false, null);
+  
+    // then
+    // only mandatory
+    assertEquals(dt.getAttributes(true, false), new HashSet(Arrays.asList(aMand.getName(), aMandND.getName())));
+    // only optional
+    assertEquals(dt.getAttributes(false, true), new HashSet(Arrays.asList(aOpt.getName(), aOptND.getName())));
+    // both
+    assertEquals(dt.getAttributes(true, true), new HashSet(Arrays.asList(aMand.getName(), aMandND.getName(), aOpt.getName(), aOptND.getName())));
+  }
+  
+  @Test
+  @DisplayName("isMandatory() and isOptional() should return correct status")
+  void isMandatoryOptional() {
+    // given
+    DocType dt = DocTypeTest.generate(Collections.emptyList());
+    Attribute aMand = AttributeTest.generate();
+    Attribute aOpt = AttributeTest.generate();
+    
+    // when
+    dt.putAttribute(aMand, true, "test");
+    dt.putAttribute(aOpt, false, "test");
+    
+    // then
+    assertTrue(dt.isMandatory(aMand));
+    assertFalse(dt.isMandatory(aOpt));
+  }
+  
+  @Test
+  @DisplayName("getDefault() should return correct default values")
+  void getDefault() {
+    // given
+    DocType dt = DocTypeTest.generate(Collections.emptyList());
+    Attribute aMand = AttributeTest.generate();
+    Attribute aMandND = AttributeTest.generate();
+    Attribute aOpt = AttributeTest.generate();
+    Attribute aOptND = AttributeTest.generate();
+    
+    // when
+    dt.putAttribute(aMand, true, "test");
+    dt.putAttribute(aMandND, true, "");
+    dt.putAttribute(aOpt, false, "test");
+    dt.putAttribute(aOptND, false, null);
+    
+    // then
+    assertEquals("test", dt.getDefault(aMand));
+    assertEquals("test", dt.getDefault(aOpt));
+    assertEquals("", dt.getDefault(aMandND));
+    assertEquals("", dt.getDefault(aOptND));
+  }
+  
+  @Test
+  @DisplayName("putAttribute() should silently replace attribute settings.")
   void replaceSchemaEntriesForDups() {
+    // given
     Attribute a = AttributeTest.generate();
-
-    this.dt.putAttribute(a, true, "defaultA");
-    assertTrue("defaultA".equals(this.dt.getDefaults().get(a.getName())));
-    assertTrue(this.dt.getMandatory().get(a.getName()));
-
+    DocType dt = DocTypeTest.generate();
+    dt.putAttribute(a, true, "defaultA");
+    
+    // when:
     // a is inserted as mandatory, now lets make it optional
     // and replace its default value
-    this.dt.putAttribute(a, false, "test");
-    assertTrue("test".equals(this.dt.getDefaults().get(a.getName())));
-    assertFalse(this.dt.getMandatory().get(a.getName()));
+    dt.putAttribute(a, false, "test");
+    assertEquals("test", dt.getDefault(a));
+    assertFalse(dt.isMandatory(a));
   }
-
-  /*
-  @ParameterizedTest(name = "{index}: {0}")
-  @Tag("exception-tests")
-  @DisplayName("model.doc.DocType invalid name should throw an exception")
-  @ValueSource(strings = { "awd2921", "##-aaa" })
-  void invalidNameException(String s) {
-    Assertions.assertThrows(IllegalArgumentException.class, () -> {
-      DocType.checkName(s);
-    });
+  
+  public static List<DocType> generate(int num, List<Attribute> attrs) {
+    List<DocType> dtl = new ArrayList<>();
+    for(int i = 0; i < num; i++) {
+      Map<String, Document> attributes = new HashMap<>();
+      
+      if (attrs.size() > 0) {
+        // generate a random list of attributes to use for every doctype
+        Collections.shuffle(attrs);
+        List<Attribute> as = attrs.subList(0, Random.getInt(attrs.size()));
+  
+        // generate random values for each attribute
+        for (int j = 0; j < as.size(); j++) {
+          Document d = new Document();
+          if (Random.getBool())
+            d.put("default", Random.getString(10));
+          d.put("mandatory", Random.getBool());
+          attributes.put(as.get(j).getName(), d);
+        }
+      }
+      // generate the doctype
+      DocType dt = new DocType(Random.getString(6),
+                               Random.getBool(), Random.getBool(),
+                               attributes, Random.getString(10));
+      dtl.add(dt);
+    }
+    return dtl;
   }
-
-  @ParameterizedTest(name = "{index}: {0}")
-  @Tag("exception-tests")
-  @DisplayName("model.doc.DocType valid name should return true")
-  @ValueSource(strings = { "awd-as", "AAA", "AA_as" })
-  void validNames(String s) {
-    Assertions.assertTrue(DocType.checkName(s));
-  }
-
-  @Test
-  @Tag("exception-tests")
-  @DisplayName("model.doc.DocType setName() should throw an exception on system types")
-  void setNameSystemTypeException() {
-    DocType t = new DocType("test", false, true);
-    Assertions.assertThrows(AssertionError.class, () -> {
-      t.setName("tset");
-    });
-  }
-
-  @Test
-  @Tag("exception-tests")
-  @DisplayName("model.doc.DocType setMultidoc() should throw an exception on system types")
-  void setMultidocSystemTypeException() {
-    DocType t = new DocType("test", false, true);
-    Assertions.assertThrows(AssertionError.class, () -> {
-      t.setMultidoc(true);
-    });
-  }
-  */
-
-  //TODO: test setName exception when system type
-  //TODO: test setMultidoc exception when system type
-  //TODO: test getAttributes with different inclusions of mandatory/optional attributes
-
   public static List<DocType> generate(int num) {
     // generate at least 2, at max 20 random attributes
     List<Attribute> attrs = AttributeTest.generate(Random.getInt(num%19)+2);
-
-    List<DocType> dtl = new ArrayList<DocType>();
-    for(int i = 0; i < num; i++) {
-      // generate a random list of attributes to use for every doctype
-      Collections.shuffle(attrs);
-      List<Attribute> as = attrs.subList(0, Random.getInt(attrs.size()));
-
-      // generate random values for each attribute
-      Map<String,Boolean> man = new HashMap<String,Boolean>();
-      Map<String,String> defs = new HashMap<String,String>();
-      for(int j = 0; j < as.size(); j++) {
-        man.put(as.get(j).getName(), Random.getBool());
-        defs.put(as.get(j).getName(), Random.getString(10));
-      }
-
-      // generate the doctype
-      DocType d = new DocType(Random.getString(6), Random.getBool(), Random.getBool(), as, man, defs);
-      dtl.add(d);
-    }
-    return dtl;
+    return generate(num, attrs);
+  }
+  public static DocType generate(List<Attribute> attrs) {
+    return generate(1, attrs).get(0);
   }
   public static DocType generate() {
     return generate(1).get(0);

@@ -1,20 +1,23 @@
 package de.fzj.peerpub.doc.doctype;
 
+import de.fzj.peerpub.doc.validator.Referable;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.Setter;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import de.fzj.peerpub.doc.attribute.Attribute;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
+import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represent a document type like article, report, etc in the database.
@@ -30,7 +33,8 @@ public class DocType {
    * Will be used as value for "type" within composed metadata documents.
    * BEWARE: the controller will apply restrictions on the content.
    */
-  @Id @NonNull private String name;
+  @Id @NotBlank @Referable
+  private String name;
   /**
    * System types will not be deletable from the UI.
    */
@@ -39,47 +43,173 @@ public class DocType {
    * Not every type may be used with {@link doc.Collection} of multiple
    * {@link doc.Document}. Enable this to use it in this context.
    */
-  @NonNull private Boolean multidoc = false;
-
+  @NonNull private Boolean multiDoc = false;
+  
   /**
-   * A list of attributes for this document type
+   * Map attributes by their name (=_id) and give them status mandatory or optional plus a default value.
    */
-  @DBRef private List<Attribute> attributes = new ArrayList<>();
+  @Setter(AccessLevel.NONE)
+  @NonNull private Map<String, org.bson.Document> attributes = new HashMap<>();
+  
   /**
-   * Mandatory or optional status of the attributes
+   * Display name for showing this doc type in the UI. Could be a translatable
+   * string "{xxx.xxx}", so we need to split name and displayName
    */
-  private Map<String, Boolean> mandatory = new HashMap<>();
+  @NotBlank private String displayName;
+  
+  static final String DEFAULT = "default";
+  static final String MANDATORY = "mandatory";
+  
   /**
-   * (Optional) default values for attributes
-   */
-  private Map<String, String> defaults = new HashMap<>();
-
-  /**
-   * Put an attribute to this Document Types schema. Replaces if already present.
-   * You cannot add different options for the same attribute.
+   * Put an attribute to this document type. Replaces if already present.
    * @param a The attribute to put into the schema.
-   * @param isMandatory Indicate if this is a mandatory attribute (the user has to provide a value).
+   * @param mandatory Indicate if this is a mandatory attribute (the user has to provide a value).
    * @param defaultValue Give a default value as a convinience for the user. May be null.
    */
-  public void putAttribute(@NonNull Attribute a, @NonNull Boolean isMandatory, String defaultValue) {
-    if (isMandatory && (defaultValue == null || defaultValue.isEmpty())) {
-      throw new IllegalArgumentException("Cannot add a mandatory attribute without a default value");
+  public void putAttribute(@NonNull Attribute a, @NonNull Boolean mandatory, String defaultValue) {
+    // get the document for this attribute if present, else create one.
+    org.bson.Document doc;
+    if (attributes.containsKey(a.getName())) {
+      doc = attributes.get(a.getName());
+    } else {
+      doc = new org.bson.Document();
     }
     
-    // add attribute if not already present
-    if (!this.attributes.contains(a)) {
-      this.attributes.add(a);
-    }
-    this.mandatory.put(a.getName(), isMandatory);
-    
-    // put default value if given
+    // insert data
+    doc.put(MANDATORY, mandatory);
     if (defaultValue != null && !defaultValue.isEmpty()) {
-      this.defaults.put(a.getName(), defaultValue);
+      doc.put(DEFAULT, defaultValue);
+    }
+    // add/overwrite the document
+    attributes.put(a.getName(), doc);
+  }
+  
+  /**
+   * Simply delete the attribute key and associated settings. If not existent, this will stay silent.
+   * @param a
+   */
+  public void removeAttribute(@NonNull Attribute a) {
+    attributes.remove(a.getName());
+  }
+  
+  /**
+   * Get all defined attributes with either status mandatory, optional or both.
+   * @param mandatory Include mandatory attributes in the result?
+   * @param optional Include optional attributes in the result?
+   * @return A Set<String> with the names of the attributes. Another database lookup is needed to get real objects.
+   */
+  public Set<String> getAttributes(@NonNull Boolean mandatory, @NonNull Boolean optional) {
+    Set<String> result = new HashSet<>();
+    // iterate over the key set
+    for (String aName : this.attributes.keySet()) {
+      if (mandatory && isMandatory(aName)) {
+        result.add(aName);
+      } else {
+        if (optional && isOptional(aName)) {
+          result.add(aName);
+        }
+      }
+    }
+    return result;
+  }
+  
+  /**
+   * Get all defined attributes for a given document type.
+   * @return A Set<String> with the names of the attributes. Another database lookup is needed to get real objects.
+   */
+  public Set<String> getAttributes() {
+    return getAttributes(true, true);
+  }
+  
+  /**
+   * Return the mandatory status for an attribute.
+   * @param a The name of the attribute we want the status from.
+   * @return true = mandatory, false = optional
+   * @throws IllegalArgumentException In case of anything is missing (status or attribute)
+   */
+  public Boolean isMandatory(@Referable String a) {
+    if (this.attributes.containsKey(a)) {
+      org.bson.Document d = this.attributes.get(a);
+      if (d.containsKey(MANDATORY) && d.get(MANDATORY) != null) {
+        return (Boolean) d.get(MANDATORY);
+      } else {
+        throw new IllegalArgumentException("The mandatory status has not been defined for attribute " + a
+            + " on this document type.");
+      }
+    } else {
+      throw new IllegalArgumentException("Attribute " + a + " is not defined for this document type.");
     }
   }
-  //public Set<Attribute> getAttributes() {}
-  //public Set<Attribute> getAttributes(Boolean incMand, Boolean incOpt) {}
-  //public String getDefault(Attribute a) {}
-  //public Boolean isMandatory(Attribute a) {}
-  //public Boolean isOptional(Attribute a) {}
+  
+  /**
+   * Return the mandatory status for an attribute.
+   * @param a The attribute we want the status from.
+   * @return true = mandatory, false = optional
+   * @throws IllegalArgumentException In case of anything is missing (status or attribute)
+   */
+  public Boolean isMandatory(@NonNull Attribute a) {
+    return isMandatory(a.getName());
+  }
+  
+  /**
+   * Return the optional status for an attribute.
+   * @param a The attribute we want the status from.
+   * @return true = optional, false = mandatory
+   * @throws IllegalArgumentException In case of anything is missing (status or attribute)
+   */
+  public Boolean isOptional(@NonNull Attribute a) {
+    return !isMandatory(a);
+  }
+  
+  /**
+   * Return the optional status for an attribute.
+   * @param a The name of the attribute we want the status from.
+   * @return true = optional, false = mandatory
+   * @throws IllegalArgumentException In case of anything is missing (status or attribute)
+   */
+  public Boolean isOptional(@Referable String a) {
+    return !isMandatory(a);
+  }
+  
+  /**
+   * Return the default value or an empty string for an attribute.
+   * @param a The attribute we want the default value from.
+   * @return Default value String or empty String.
+   * @throws IllegalArgumentException In case if the attribute is not defined.
+   */
+  public String getDefault(@NonNull Attribute a) {
+    if (this.attributes.containsKey(a.getName())) {
+      org.bson.Document d = this.attributes.get(a.getName());
+      if (d.containsKey(DEFAULT) && d.get(DEFAULT) != null) {
+        return (String) d.get(DEFAULT);
+      } else {
+        return "";
+      }
+    } else {
+      throw new IllegalArgumentException("Attribute " + a.getName() + " is not defined for this document type.");
+    }
+  }
+  
+  /**
+   * equals(), extended Version. Normally we only want equals() to compare
+   * the name, as anything else is not important. In some cases, we might want
+   * a more verbose look, especially for testing.
+   */
+  public boolean equalsDeep(Object o) {
+    if (this.equals(o)) {
+      DocType oDT = (DocType) o;
+      if (!oDT.getSystem().equals(this.getSystem())
+          || !oDT.getMultiDoc().equals(this.getMultiDoc())) {
+        return false;
+      }
+      if (!this.getAttributes().equals(oDT.getAttributes())) {
+        return false;
+      }
+      if (!this.getDisplayName().equals(oDT.getDisplayName())) {
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
 }

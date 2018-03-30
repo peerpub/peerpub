@@ -1,6 +1,7 @@
 package de.fzj.peerpub.doc.doctype;
 
 import java.util.List;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**
@@ -9,5 +10,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 public interface DocTypeRepository extends MongoRepository<DocType, String> {
   DocType findByName(String name);
   List<DocType> findBySystem(Boolean system);
-  List<DocType> findByMultidoc(Boolean multiDoc);
+  List<DocType> findByMultiDoc(Boolean multiDoc);
 }
