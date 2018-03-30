@@ -1,0 +1,124 @@
+{
+  "DocTypes": [
+    {
+      "_id": "article-journal",
+      "displayName": "doctype.article-journal",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "book",
+      "displayName": "doctype.book",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "report",
+      "displayName": "doctype.report",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "thesis-bachelor",
+      "displayName": "doctype.thesis-bachelor",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {
+        "grantingInstitution": { "mandatory": true },
+        "examDate": { "mandatory": false },
+        "grantedDate": { "mandatory": true },
+        "projectStartDate": { "mandatory": false },
+        "projectEndDate": { "mandatory": true }
+      },
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "thesis-master",
+      "displayName": "doctype.thesis-master",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {
+        "grantingInstitution": { "mandatory": true },
+        "examDate": { "mandatory": false },
+        "grantedDate": { "mandatory": true },
+        "projectStartDate": { "mandatory": false },
+        "projectEndDate": { "mandatory": true }
+      },
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "thesis-phd",
+      "displayName": "doctype.thesis-phd",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {
+        "grantingInstitution": { "mandatory": true },
+        "examDate": { "mandatory": false },
+        "grantedDate": { "mandatory": true },
+        "projectStartDate": { "mandatory": false },
+        "projectEndDate": { "mandatory": true }
+      },
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "thesis-diploma",
+      "displayName": "doctype.thesis-diploma",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {
+        "grantingInstitution": { "mandatory": true },
+        "examDate": { "mandatory": false },
+        "grantedDate": { "mandatory": true },
+        "projectStartDate": { "mandatory": false },
+        "projectEndDate": { "mandatory": true }
+      },
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "talk",
+      "displayName": "doctype.talk",
+      "system": true,
+      "multiDoc": false,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "conference-abstract",
+      "displayName": "doctype.conference-abstract",
+      "system": true,
+      "multiDoc": true,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "conference-poster",
+      "displayName": "doctype.conference-poster",
+      "system": true,
+      "multiDoc": true,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "conference-presentation",
+      "displayName": "doctype.conference-presentation",
+      "system": true,
+      "multiDoc": true,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    },
+    {
+      "_id": "conference-proceedings",
+      "displayName": "doctype.conference-proceedings",
+      "system": true,
+      "multiDoc": true,
+      "attributes": {},
+      "_class": "de.fzj.peerpub.doc.doctype.DocType"
+    }
+  ]
+}

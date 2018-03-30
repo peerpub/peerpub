@@ -2,6 +2,8 @@ package de.fzj.peerpub.config;
 
 import de.fzj.peerpub.doc.attribute.Attribute;
 import de.fzj.peerpub.doc.attribute.AttributeRepository;
+import de.fzj.peerpub.doc.doctype.DocType;
+import de.fzj.peerpub.doc.doctype.DocTypeRepository;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,9 @@ public class MongoChangelogIT {
   @Autowired
   private AttributeRepository attributeRepository;
   
+  @Autowired
+  private DocTypeRepository docTypeRepository;
+  
   private MongoChangelog change = new MongoChangelog();
   
   @Test
@@ -39,6 +44,8 @@ public class MongoChangelogIT {
     // then
     List<Attribute> attrs = attributeRepository.findAll();
     assertTrue(attrs.size() > 0);
+    List<DocType> doctypes = docTypeRepository.findAll();
+    assertTrue(doctypes.size() > 0);
   }
 
 }

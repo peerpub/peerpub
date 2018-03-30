@@ -9,6 +9,30 @@
       "_class": "de.fzj.peerpub.doc.attribute.Attribute"
     },
     {
+      "_id": "examDate",
+      "key": "examDate",
+      "label": "Exam Date",
+      "description": "Date on which the necessary final exam has been passed.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "grantedDate",
+      "key": "grantedDate",
+      "label": "Granted Date",
+      "description": "Date on which the title has been granted.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "grantingInstitution",
+      "key": "grantingInstitution",
+      "label": "Granting Institution",
+      "description": "Name of the university or other institution that grants the academic title.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
       "_id": "isbn",
       "key": "isbn",
       "label": "ISBN",
@@ -53,6 +77,22 @@
       "key": "page-first",
       "label": "First page no.",
       "description": "Please provide the page number where to find first page of your document within the journal or other media.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "projectEndDate",
+      "key": "projectEndDate",
+      "label": "Project End",
+      "description": "Date when the associated project ended.",
+      "jsonSchema": "{}",
+      "_class": "de.fzj.peerpub.doc.attribute.Attribute"
+    },
+    {
+      "_id": "projectStartDate",
+      "key": "projectStartDate",
+      "label": "Project Start",
+      "description": "Date when the associated project was started.",
       "jsonSchema": "{}",
       "_class": "de.fzj.peerpub.doc.attribute.Attribute"
     },
