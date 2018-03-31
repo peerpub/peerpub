@@ -33,7 +33,7 @@ public class DocType {
    * Will be used as value for "type" within composed metadata documents.
    * BEWARE: the controller will apply restrictions on the content.
    */
-  @Id @NotBlank @Referable
+  @Id @NonNull @Referable
   private String name;
   /**
    * System types will not be deletable from the UI.
