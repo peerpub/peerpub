@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: htmlhead"></head>
+<body>
+<header th:replace="layout :: header">Top navigation goes here</header>
+<main class="container">
+  <h1 class="mt-3">[[#{admin.doctype.list}]]</h1>
+  <!-- deletion modal -->
+  <div th:replace="modals/delete :: modal"></div>
+  
+  <!-- alerts -->
+  <div class="alert alert-success" role="alert" th:if="${success}" th:text="#{${success}}">SUCCESS</div>
+  <div class="alert alert-danger" role="alert" th:if="${fail}" th:text="#{${fail}}">FAILED</div>
+  
+  <!-- list of metadata attributes -->
+  <div id="doctype-list">
+    <!-- LEGEND PLUS ADD LINK -->
+    <div class="card">
+      <div class="card-header accordion">
+        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#legend"
+                aria-expanded="false" aria-controls="legend">
+          <i class="arrow fas fa-angle-right"></i>
+          [[#{legend}]] <i class="fas fa-info-circle"></i>
+        </button>
+        <a class="btn btn-link float-right" href="#">
+          [[#{add}]] <i class="fas fa-plus-circle"></i>
+        </a>
+      </div>
+      <div id="legend" class="collapse" aria-labelledby="legend" data-parent="#doctype-list">
+        <div class="card-body">
+          <div><i class="fas fa-list-alt"></i> <span th:text="#{admin.doctype.multidoc}">multidoc</span></div>
+          <div><i class="fas fa-industry"></i> <span th:text="#{admin.doctype.system}">system</span></div>
+          <div><i class="far fa-circle"></i> <span th:text="#{admin.attribute.optional}">optional</span></div>
+          <div><i class="fas fa-exclamation-circle"></i> <span th:text="#{admin.attribute.mandatory}">optional</span></div>
+          <div><i class="fas fa-times-circle"></i> <span th:text="#{admin.attribute.noDefault}">nodefault</span></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- LIST OF DOCUMENT TYPES -->
+    <div class="card" th:each="doctype : ${doctypes}">
+      
+      <!-- CARD HEADER -->
+      <div class="card-header accordion" th:id="${doctype.name}">
+        <button class="btn btn-link collapsed" data-toggle="collapse" th:data-target="'#dt-'+${doctype.name}"
+                aria-expanded="false" th:aria-controls="'attr-'+${doctype.name}">
+          <i class="arrow fas fa-angle-right"></i>
+          [[#{${doctype.displayName}}]]
+        </button>
+        <span class="float-right">
+          <span th:if="${doctype.multiDoc} == true" data-toggle="tooltip" th:title="#{admin.doctype.multidoc}" th:id="${doctype.name}+'-multidoc'" class="multidoc"><i class="fas fa-list-alt mr-2"></i></span>
+          <span th:if="${doctype.system} == true" data-toggle="tooltip" th:title="#{admin.doctype.system}" th:id="${doctype.name}+'-system'" class="system"><i class="fas fa-industry mr-3"></i></span>
+          <a class="btn btn-link" href="#">
+            [[#{edit}]] <i class="fas fa-pencil-alt"></i>
+          </a>
+        </span>
+      </div>
+      
+      <!-- CARD BODY -->
+      <div th:id="'dt-'+${doctype.name}" class="collapse" th:aria-labelledby="${doctype.name}" data-parent="#doctype-list">
+        <div class="card-body">
+          <ul class="list-group">
+            <li class="list-group-item">[[#{name}]] (ID): "[[${doctype.name}]]"</li>
+            <li class="list-group-item">[[#{displayName}]]: "[[#{${doctype.displayName}}]]"</li>
+            <li th:if="${doctype.attributes.size()} > 0" class="list-group-item">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">[[#{attribute}]]</th>
+                    <th scope="col">[[#{modus}]]</th>
+                    <th scope="col">[[#{defaultValue}]]</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="attribute,idx : ${doctype.attributes}">
+                    <th scope="row" th:text="${idx.count}">1</th>
+                    <td>
+                      [[${attributeMap.get(attribute).getLabel()}]]
+                      <span class="small">([[${attribute}]])</span>
+                    </td>
+                    <td>
+                      <span data-toggle="tooltip" th:title="${doctype.isMandatory(attribute)} ? #{admin.attribute.mandatory} : #{admin.attribute.optional}">
+                        <i class="fas" th:class="${doctype.isMandatory(attribute)} ? 'fas fa-exclamation-circle' : 'far fa-circle'"></i>
+                      </span>
+                    </td>
+                    <!-- show default value OR (x) -->
+                    <td th:if="${doctype.getDefault(attribute).length()} > 0">"[[${doctype.getDefault(attribute)}]]"</td>
+                    <td th:unless="${doctype.getDefault(attribute).length()} > 0">
+                      <span data-toggle="tooltip" th:title="#{admin.attribute.noDefault}"><i class="fas fa-times-circle"></i></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<footer th:replace="layout :: footer">Footer goes here</footer>
+</body>
+</html>
