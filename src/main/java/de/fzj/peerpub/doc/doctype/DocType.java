@@ -177,17 +177,27 @@ public class DocType {
    * @return Default value String or empty String.
    * @throws IllegalArgumentException In case if the attribute is not defined.
    */
-  public String getDefault(@NonNull Attribute a) {
-    if (this.attributes.containsKey(a.getName())) {
-      org.bson.Document d = this.attributes.get(a.getName());
+  public String getDefault(@NonNull String a) {
+    if (this.attributes.containsKey(a)) {
+      org.bson.Document d = this.attributes.get(a);
       if (d.containsKey(DEFAULT) && d.get(DEFAULT) != null) {
         return (String) d.get(DEFAULT);
       } else {
         return "";
       }
     } else {
-      throw new IllegalArgumentException("Attribute " + a.getName() + " is not defined for this document type.");
+      throw new IllegalArgumentException("Attribute " + a + " is not defined for this document type.");
     }
+  }
+  
+  /**
+   * Return the default value or an empty string for an attribute.
+   * @param a The attribute we want the default value from.
+   * @return Default value String or empty String.
+   * @throws IllegalArgumentException In case if the attribute is not defined.
+   */
+  public String getDefault(@NonNull Attribute a) {
+    return getDefault(a.getName());
   }
   
   /**
