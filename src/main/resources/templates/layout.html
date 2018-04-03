@@ -9,6 +9,7 @@
   <meta name="author" content="Forschungszentrum Jülich GmbH">
   <link rel="shortcut icon" type="image/png" th:href="@{/images/favicon.png}">
   <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+  <link th:href="@{/webjars/dna.js/dna.css}" rel="stylesheet">
   <link th:href="@{/css/peerpub.css}" rel="stylesheet">
   
   <title th:text="${title} ? ${title}+' :: '+#{brand.name} : #{brand.name}">Standard Layout Prototype</title>
@@ -30,6 +31,7 @@
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    <script th:src="@{/webjars/dna.js/dna.min.js}"></script>
     <script th:src="@{/js/modals.js}"></script>
     <script th:src="@{/js/peerpub.js}"></script>
     <!--/* Per-page placeholder for additional links */-->
