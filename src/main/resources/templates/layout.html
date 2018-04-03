@@ -20,7 +20,7 @@
   <main class="container">
     Content goes here...
   </main>
-  <footer th:fragment="footer" class="footer">
+  <footer th:fragment="footer(scripts)" class="footer">
     <div class="container">
       <span class="text-muted credit">
           &copy; <span>2018</span> <span th:text="#{brand.author}">author</span>
@@ -32,6 +32,8 @@
     <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/js/modals.js}"></script>
     <script th:src="@{/js/peerpub.js}"></script>
+    <!--/* Per-page placeholder for additional links */-->
+    <th:block th:replace="${scripts}" />
   </footer>
 </body>
 </html>
