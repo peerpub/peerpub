@@ -77,6 +77,20 @@ public class DocTypeTest {
   }
   
   @Test
+  @DisplayName("isMandatory() throwing exceptions if no such attributes")
+  void isMandatoryAttrNotFound() throws Exception {
+    // given
+    DocType dt = DocTypeTest.generate(Collections.emptyList());
+    Attribute aMand = AttributeTest.generate();
+    Attribute aOpt = AttributeTest.generate();
+    dt.putAttribute(aMand, true, "test");
+    dt.putAttribute(aOpt, false, "test");
+  
+    // when && then
+    assertThrows(IllegalArgumentException.class, ()->{ dt.isMandatory(Random.getString(20)); });
+  }
+  
+  @Test
   @DisplayName("getDefault() should return correct default values")
   void getDefault() {
     // given
