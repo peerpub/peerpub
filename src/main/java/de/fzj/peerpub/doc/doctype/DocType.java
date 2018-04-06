@@ -1,12 +1,7 @@
 package de.fzj.peerpub.doc.doctype;
 
 import de.fzj.peerpub.doc.validator.Referable;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -63,15 +58,15 @@ public class DocType {
   
   /**
    * Put an attribute to this document type. Replaces if already present.
-   * @param a The attribute to put into the schema.
+   * @param aName The name of the attribute to put into the schema.
    * @param mandatory Indicate if this is a mandatory attribute (the user has to provide a value).
    * @param defaultValue Give a default value as a convinience for the user. May be null.
    */
-  public void putAttribute(@NonNull Attribute a, @NonNull Boolean mandatory, String defaultValue) {
+  public void putAttribute(@NonNull String aName, @NonNull Boolean mandatory, String defaultValue) {
     // get the document for this attribute if present, else create one.
     org.bson.Document doc;
-    if (attributes.containsKey(a.getName())) {
-      doc = attributes.get(a.getName());
+    if (attributes.containsKey(aName)) {
+      doc = attributes.get(aName);
     } else {
       doc = new org.bson.Document();
     }
@@ -82,7 +77,25 @@ public class DocType {
       doc.put(DEFAULT, defaultValue);
     }
     // add/overwrite the document
-    attributes.put(a.getName(), doc);
+    attributes.put(aName, doc);
+  }
+  
+  /**
+   * Put an attribute to this document type. Replaces if already present.
+   * @param a The attribute to put into the schema.
+   * @param mandatory Indicate if this is a mandatory attribute (the user has to provide a value).
+   * @param defaultValue Give a default value as a convinience for the user. May be null.
+   */
+  public void putAttribute(@NonNull Attribute a, @NonNull Boolean mandatory, String defaultValue) {
+    putAttribute(a.getName(), mandatory, defaultValue);
+  }
+  
+  /**
+   * Simply delete the attribute key and associated settings. If not existent, this will stay silent.
+   * @param aName
+   */
+  public void removeAttribute(@NonNull String aName) {
+    attributes.remove(aName);
   }
   
   /**
@@ -90,7 +103,7 @@ public class DocType {
    * @param a
    */
   public void removeAttribute(@NonNull Attribute a) {
-    attributes.remove(a.getName());
+    removeAttribute(a.getName());
   }
   
   /**
