@@ -14,7 +14,7 @@ import javax.validation.Payload;
  * leaves readable names within MongoDB and allows easy references (DBRef not usable everywhere)
  */
 @Documented
-@Constraint(validatedBy = ReferableValidator.class)
+@Constraint(validatedBy = {ReferableValidator.class, ReferableListValidator.class, ReferableMapValidator.class})
 @Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Referable {

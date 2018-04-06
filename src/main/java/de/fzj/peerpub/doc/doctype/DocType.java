@@ -49,6 +49,7 @@ public class DocType {
    * Map attributes by their name (=_id) and give them status mandatory or optional plus a default value.
    */
   @Setter(AccessLevel.NONE)
+  @Referable
   @NonNull private Map<String, org.bson.Document> attributes = new HashMap<>();
   
   /**
