@@ -18,6 +18,7 @@ import java.util.Set;
  * Represent a document type like article, report, etc in the database.
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"name"})
 @Document(collection = "DocTypes")
@@ -136,6 +137,14 @@ public class DocType {
   }
   
   /**
+   * Sometime we need to get the real mapping. (Tests, etc)
+   * Only package visibility for now.
+   */
+  Map<String, org.bson.Document> getAttributesMap() {
+    return attributes;
+  }
+  
+  /**
    * Return the mandatory status for an attribute.
    * @param a The name of the attribute we want the status from.
    * @return true = mandatory, false = optional
@@ -227,6 +236,9 @@ public class DocType {
         return false;
       }
       if (!this.getAttributes().equals(oDT.getAttributes())) {
+        return false;
+      }
+      if (!this.getAttributesMap().equals(oDT.getAttributesMap())) {
         return false;
       }
       if (!this.getDisplayName().equals(oDT.getDisplayName())) {
