@@ -37,8 +37,14 @@ public class AttributeAdminCtrl {
   /**
    * Metadata attribute DAO (using directly, not using unnecessary service layer)
    */
-  @Autowired
   private AttributeRepository attributeRepository;
+  
+  /**
+   * Constructor with explicit but autowired dependency on repository
+   */
+  public AttributeAdminCtrl(@Autowired AttributeRepository repo) {
+    this.attributeRepository = repo;
+  }
 
   /**
    * Read all attributes and list 'em

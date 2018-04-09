@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 // see https://github.com/mockito/mockito/issues/1221
 // and https://github.com/mockito/mockito/issues/445
 import name.falgout.jeffrey.testing.junit5.MockitoExtension;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mock;
@@ -35,17 +36,16 @@ public class AttributeAdminCtrlTest {
 
   @Mock
   private AttributeRepository attributeRepository;
-
-  @InjectMocks
+  
   private AttributeAdminCtrl attributeAdminCtrl;
-
-  @Autowired
+  
   private MockMvc mvc;
 
   @BeforeEach
   void setup() {
+    this.attributeAdminCtrl = new AttributeAdminCtrl(attributeRepository);
     // MockMvc standalone approach
-    mvc = MockMvcBuilders.standaloneSetup(attributeAdminCtrl)
+    this.mvc = MockMvcBuilders.standaloneSetup(this.attributeAdminCtrl)
             //.setControllerAdvice(new SuperHeroExceptionHandler())
             //.addFilters(new SuperHeroFilter())
             .build();
