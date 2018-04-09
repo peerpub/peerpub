@@ -32,4 +32,24 @@ public class DocTypeService {
     return docTypeRepository.findAll();
   }
   
+  /**
+   * Get a specific document type by its name as a form object
+   * @param name The (referable) name of the document type
+   */
+  public Optional<DocTypeForm> getByName(@NotNull String name) {
+    Optional<DocType> oDt = docTypeRepository.findByName(name);
+    if (oDt.isPresent()) {
+      DocType dt = oDt.get();
+      return Optional.of(DocTypeForm.toForm(dt));
+    }
+    return Optional.empty();
+  }
+  
+  /**
+   * Save to database after editing a doc type
+   */
+  public DocTypeForm saveEdit(@NotNull DocTypeForm dtf) {
+    DocType dt = dtf.toType();
+    return DocTypeForm.toForm(docTypeRepository.save(dt));
+  }
 }
