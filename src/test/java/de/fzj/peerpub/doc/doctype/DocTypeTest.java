@@ -129,7 +129,12 @@ public class DocTypeTest {
     assertFalse(dt.isMandatory(a));
   }
   
-  public static List<DocType> generate(int num, List<Attribute> attrs) {
+  public static List<DocType> generate(int num, List<Attribute> attrs, int doAttr) {
+    if (doAttr > attrs.size())
+      throw new RuntimeException("Cannot associate more attributes than you gave me.");
+    if (attrs.size() > 0 && doAttr < 0)
+      doAttr = Random.getInt(attrs.size());
+    
     List<DocType> dtl = new ArrayList<>();
     for(int i = 0; i < num; i++) {
       Map<String, Document> attributes = new HashMap<>();
@@ -137,7 +142,7 @@ public class DocTypeTest {
       if (attrs.size() > 0) {
         // generate a random list of attributes to use for every doctype
         Collections.shuffle(attrs);
-        List<Attribute> as = attrs.subList(0, Random.getInt(attrs.size()));
+        List<Attribute> as = attrs.subList(0, doAttr);
   
         // generate random values for each attribute
         for (int j = 0; j < as.size(); j++) {
@@ -159,10 +164,13 @@ public class DocTypeTest {
   public static List<DocType> generate(int num) {
     // generate at least 2, at max 20 random attributes
     List<Attribute> attrs = AttributeTest.generate(Random.getInt(num%19)+2);
-    return generate(num, attrs);
+    return generate(num, attrs, -1);
+  }
+  public static DocType generate(List<Attribute> attrs, int doAttr) {
+    return generate(1, attrs, doAttr).get(0);
   }
   public static DocType generate(List<Attribute> attrs) {
-    return generate(1, attrs).get(0);
+    return generate(1, attrs, -1).get(0);
   }
   public static DocType generate() {
     return generate(1).get(0);
