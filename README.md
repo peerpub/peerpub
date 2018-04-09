@@ -2,6 +2,9 @@
 # PeerPub
 
 [![pipeline status](https://src.ipp.kfa-juelich.de/it/peerpub/badges/development/pipeline.svg)](https://src.ipp.kfa-juelich.de/it/peerpub/commits/development)
+[![coverage report](https://src.ipp.kfa-juelich.de/it/peerpub/badges/development/coverage.svg)](https://src.ipp.kfa-juelich.de/it/peerpub/commits/development)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
 
 This software can be used for internal peer review clearance processes of
 scientific or other publications. It is primarily targeted to a scientific
