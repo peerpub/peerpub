@@ -49,4 +49,5 @@ analysation:
 integration-testing:
   stage: integration
   script:
-    - LANG=C mvn ${MAVEN_CLI_OPTS} verify -DskipUTs -Dpmd.skip=true -Dcpd.skip=true -Dfindbugs.skip=true -Dcheckstyle.skip
+    - LANG=C mvn ${MAVEN_CLI_OPTS} verify -DskipUTs -Dpmd.skip -Dcpd.skip -Dfindbugs.skip -Dcheckstyle.skip
+    - LANG=C mvn clover:instrument clover:log -Dpmd.skip -Dcpd.skip -Dfindbugs.skip -Dcheckstyle.skip

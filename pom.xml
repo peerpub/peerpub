@@ -31,6 +31,8 @@
     <junit.jupiter.version>5.1.0</junit.jupiter.version>
     <junit.vintage.version>5.1.0</junit.vintage.version>
     <junit.platform.version>1.1.0</junit.platform.version>
+    <openclover.version>4.2.0</openclover.version>
+    <surefire.and.failsafe.report.dir>target/test-report</surefire.and.failsafe.report.dir>
     <skipUTs>false</skipUTs>
     <skipITs>false</skipITs>
   </properties>
@@ -115,6 +117,36 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.openclover</groupId>
+        <artifactId>clover-maven-plugin</artifactId>
+        <version>${openclover.version}</version>
+        <configuration>
+          <!--includesTestSourceRoots>false</includesTestSourceRoots-->
+          <targetPercentage>50%</targetPercentage>
+  
+          <!-- Use custom report configuration -->
+          <reportDescriptor>clover-report.xml</reportDescriptor>
+      
+          <!-- Verify that we can specify the JDK version for Clover's instrumentation -->
+          <jdk>${java.version}</jdk>
+      
+          <!-- Verify that we can exclude some files from the instrumentation. Make sure the file we are excluding
+               is referenced by other classes to ensure excluding is only done at the Clover level -->
+          <excludes>
+            <exclude>**/*Dummy*.java</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <id>site</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>instrument</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <!--
@@ -139,6 +171,7 @@
             </configurationParameters>
             -->
           </properties>
+          <reportsDirectory>${surefire.and.failsafe.report.dir}</reportsDirectory>
         </configuration>
         <dependencies>
           <dependency>
@@ -161,6 +194,7 @@
             <additionalClasspathElement>${project.build.outputDirectory}</additionalClasspathElement>
           </additionalClasspathElements>
           <skipITs>${skipITs}</skipITs>
+          <reportsDirectory>${surefire.and.failsafe.report.dir}</reportsDirectory>
         </configuration>
         <executions>
           <execution>
@@ -292,6 +326,28 @@
           </reportSet>
         </reportSets>
       </plugin>
+      <plugin>
+        <groupId>org.openclover</groupId>
+        <artifactId>clover-maven-plugin</artifactId>
+        <version>${openclover.version}</version>
+        <configuration>
+          <!-- Verify that we can modify the location of the Clover database and that the directory is created if
+               it doesn't exist. Note: we're putting the configuration here and not in the build section because the
+               build section inherits from the reporting section but not the other way around... -->
+          <!--cloverDatabase>${project.build.directory}/customclover/myclover.db</cloverDatabase-->
+          <reportDescriptor>clover-report.xml</reportDescriptor>
+      
+          <!-- Verify that we can generate all types of Clover reports -->
+          <generateHtml>true</generateHtml>
+          <generatePdf>false</generatePdf>
+          <generateXml>false</generateXml>
+      
+          <!-- We ask the Clover plugin to generate a historical report but we don't have any historical data saved.
+               This is to verify it doesn't error out when this is the case. -->
+          <generateHistorical>true</generateHistorical>
+          <!--useFullyQualifiedJavaLang>false</useFullyQualifiedJavaLang-->
+        </configuration>
+      </plugin>
     </plugins>
   </reporting>
 
@@ -361,7 +417,7 @@
     <dependency>
       <groupId>io.florianlopes</groupId>
       <artifactId>spring-mvc-test-utils</artifactId>
-      <version>1.0.1</version>
+      <version>1.0.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
