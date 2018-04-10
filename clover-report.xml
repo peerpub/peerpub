@@ -1,6 +1,9 @@
 <project name="Clover Report" default="current">
     <!-- Initialize Clover -->
-    <clover-setup initString="${cloverdb}"/>
+    <clover-setup initString="${cloverdb}">
+        <!-- Don't instrument methods which have cyclomatic complexity <= 1 or <= 3 statements -->
+        <methodContext name="simple_method" regexp=".*" maxComplexity="1" maxStatements="3"/>
+    </clover-setup>
     <target name="historical">
         <!-- Empty as we're not interested in historical reports right now -->
     </target>
