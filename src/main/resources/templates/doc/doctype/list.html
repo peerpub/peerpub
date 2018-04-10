@@ -51,7 +51,8 @@
         <span class="float-right">
           <span th:if="${doctype.multiDoc} == true" data-toggle="tooltip" th:title="#{admin.doctype.multidoc}" th:id="${doctype.name}+'-multidoc'" class="multidoc"><i class="fas fa-list-alt mr-2"></i></span>
           <span th:if="${doctype.system} == true" data-toggle="tooltip" th:title="#{admin.doctype.system}" th:id="${doctype.name}+'-system'" class="system"><i class="fas fa-industry mr-3"></i></span>
-          <a class="btn btn-link" href="#">
+          <a class="btn btn-link" href="#"
+             th:href="${#mvc.url('DTAC#editGetForm').arg(1,doctype.name).build()}">
             [[#{edit}]] <i class="fas fa-pencil-alt"></i>
           </a>
         </span>

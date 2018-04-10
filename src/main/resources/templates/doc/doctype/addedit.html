@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: htmlhead"></head>
+<body>
+<header th:replace="layout :: header">Top navigation goes here</header>
+<main class="container">
+  <form action="#" th:action="${edit} ? ${#mvc.url('DTAC#editPostForm').arg(1,doctype.name).build()} : ${#mvc.url('DTAC#addPostForm').build()}"
+        th:object="${doctype}" method="post">
+    <h1 class="mt-3">
+      [[${edit} ? #{admin.doctype.edit} : #{admin.doctype.add}]]
+    </h1>
+    
+    <!-- HINT: system type (only shown if true) -->
+    <div th:if="${doctype.system} == true" th:id="${doctype.name}+'-system'" class="system h5 mb-3 mt-3"><i class="fas fa-industry"></i> [[#{admin.doctype.system}]]</div>
+    <input type="hidden" th:if="*{system}" th:field="*{system}" />
+    
+    <!-- General data form -->
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="name" th:text="#{name}">Name</label>
+        <small id="nameHelp" class="form-text text-muted" th:text="#{admin.help.name}">A unique name for reference purposes.</small>
+        <input type="text" th:readonly="${edit}" th:field="*{name}" class="form-control" th:errorclass="is-invalid" aria-describedby="nameHelp">
+        <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Invalid name</div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="displayName" th:text="#{displayName}">Display name</label>
+        <small id="displayNameHelp" class="form-text text-muted" th:text="#{admin.help.displayName}">Readable name displayed in selects, etc.</small>
+        <input type="text" th:readonly="*{system}" th:field="*{displayName}" class="form-control" th:errorclass="is-invalid" aria-describedby="displayNameHelp">
+        <div class="invalid-feedback" th:if="${#fields.hasErrors('displayName')}" th:errors="*{displayName}">Invalid displayName</div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <span th:text="#{admin.doctype.multiDocCapable}">Multidoc capable?</span>
+        <small class="form-text">&nbsp;</small>
+        <div class="form-check">
+          <input type="checkbox" th:disabled="*{system}" th:field="*{multiDoc}" class="form-check-input" th:errorclass="is-invalid" aria-describedby="multiDocHelp">
+          <input type="hidden" th:if="*{system}" th:field="*{multiDoc}">
+          <label id="multiDocHelp" class="form-check-label small ml-2" for="multiDoc" th:text="#{admin.doctype.help.multidoc}">
+            Activated means capable for "multiple document publications" otherwise single doc only.
+          </label>
+        </div>
+        <div class="invalid-feedback" th:if="${#fields.hasErrors('multiDoc')}" th:errors="*{multiDoc}">Invalid multiDoc</div>
+      </div>
+    </div>
+    
+    <!-- Attributes form -->
+    <div class="h5">[[#{admin.attributes}]]</div>
+    
+    <!-- List of already attached attributes -->
+    <div th:id="${#ids.next('attributes')}" th:each="attribute, idx : *{attributes}" class="form-row attribute">
+      <div class="input-group mb-3">
+        <!-- Prepend with name and mode -->
+        <div class="input-group-prepend">
+          <div class="input-group-text" th:id="${#ids.seq('attributes')}+'-name'">
+            <div th:text="${attributeMap.get(attribute).getLabel()}">Attribute label</div>
+            <input type="hidden" th:field="*{attributes[__${idx.index}__]}" />
+          </div>
+          <div class="input-group-text">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+            <input type="checkbox" th:field="*{mandatory[__${attribute}__]}" />
+          </div>
+        </div>
+        
+        <input type="text" th:field="*{defaults[__${attribute}__]}" th:placeholder="#{defaultValue}" class="form-control"/>
+       
+        <div class="input-group-append">
+          <button class="delete-button btn btn-danger" type="button">
+            <i class="fas fa-minus-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Template for new row -->
+    <div id="attr-tmpl" class="dna-template">
+      <div class="form-row attribute">
+        <div class="input-group mb-3">
+          <!-- Prepend with name and mode -->
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <div>~~label~~</div>
+              <input type="hidden" name="~~fnName~~" value="~~name~~" />
+            </div>
+            <div class="input-group-text">
+              <i class="fas fa-exclamation-circle mr-1"></i>
+              <input type="checkbox" name="~~fnMandatory~~" value="true"/>
+              <input type="hidden" name="_~~fnMandatory~~" value="on"/>
+            </div>
+          </div>
+          <input type="text" name="~~fnDefault~~" value="" th:placeholder="#{defaultValue}" class="form-control"/>
+        
+          <div class="input-group-append">
+            <button class="delete-button btn btn-danger" type="button">
+              <i class="fas fa-minus-circle"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div data-placeholder="attr-tmpl"></div>
+    
+    <!-- Add new attribute selection + button row -->
+    <div id="add-row" class="form-row">
+      <div class="input-group mb-3">
+        <select class="input-group-text custom-select text-left" id="add-attribute-name">
+          <option selected th:text="#{choose}" value="-1">Choose...</option>
+          <option th:each="attribute : ${attributeMap}"
+                  th:value="${attribute.key}"
+                  th:text="${attribute.value.getLabel()}"
+                  th:unless="${doctype.attributes.contains(attribute.key)}"
+                  th:title="'Description: '+${attribute.value.getDescription()}">
+            Attribute label
+          </option>
+        </select>
+        <!-- AddButton -->
+        <div class="input-group-append">
+          <button id="add-button" class="btn btn-success" type="button">
+            <i class="fas fa-plus-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mb-3 small">
+      If you add a new metadata attribute, be aware of the attributes intention.
+      Choose only attributes that match to document type level usage - publisher typed
+      attributes like "Issue", "DOI", etc. should normally be avoided.
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</main>
+<footer th:replace="layout :: footer(~{::script})">
+  <script th:inline="javascript">
+    /* ADD Button functionality
+      -----------------------------------------------------------------------------------*/
+    $('#add-button').click(function() {
+      // get data
+      var name = $('#add-attribute-name').val();
+      var attribute = {
+        fnName: "attributes["+$('div.attribute').length+"]",
+        label: $('#add-attribute-name option:selected').text(),
+        name: name,
+        fnMandatory: "mandatory["+name+"]",
+        fnDefault: "defaults["+name+"]",
+      };
+      
+      // validate
+      // 1) if no type is choosen, simply reject to work.
+      // 2) if there is already the same attribute present, refuse to add again
+      if ( attribute.name == -1 || $("input[value='"+attribute.name+"']").length ) {
+        return;
+      }
+      
+      // clone and show
+      dna.clone("attr-tmpl", attribute);
+    });
+    
+    /* DELETE Button functionality
+      -----------------------------------------------------------------------------------*/
+    $('.delete-button').click(function() {
+      var statusDelete = !($(this).data('delete'));
+      
+      $(this).data('delete', statusDelete && true);
+      $(this).find('svg').toggleClass('fa-minus-circle', !statusDelete);
+      $(this).find('svg').toggleClass('fa-undo-alt', statusDelete);
+      $(this).parents('.form-row').find('input').prop('disabled', statusDelete);
+      $(this).parents('.form-row').find('.input-group-text').toggleClass('del', statusDelete);
+      $(this).parents('.form-row').find('input[type=text]').toggleClass('del', statusDelete);
+    });
+  </script>
+</footer>
+</body>
+</html>

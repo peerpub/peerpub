@@ -9,16 +9,25 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.Errors;
 
 import java.util.*;
 
 import static io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuilderUtils.postForm;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 // and https://github.com/mockito/mockito/issues/445
 
 @ExtendWith(MockitoExtension.class)
+@WebMvcTest
 @Tag("medium")
 public class DocTypeAdminCtrlTest {
   
@@ -34,20 +44,35 @@ public class DocTypeAdminCtrlTest {
   private DocTypeService docTypeService;
   @Mock
   private AttributeService attributeService;
+  @Mock
+  private AttributeRepository attributeRepository;
+  @Mock
+  private DocTypeFormValidator docTypeFormValidator;
   
-  @InjectMocks
   private DocTypeAdminCtrl docTypeAdminCtrl;
+  private DocTypeForm valid;
+  private Map<String, Attribute> attrMap;
 
   @Autowired
   private MockMvc mvc;
 
   @BeforeEach
   void setup() {
+    when(docTypeFormValidator.supports(eq(DocTypeForm.class))).thenReturn(true);
+    this.docTypeAdminCtrl = new DocTypeAdminCtrl(docTypeService,
+                                                 attributeService,
+                                                 docTypeFormValidator);
     // MockMvc standalone approach
     mvc = MockMvcBuilders.standaloneSetup(docTypeAdminCtrl)
             //.setControllerAdvice(new SuperHeroExceptionHandler())
             //.addFilters(new SuperHeroFilter())
             .build();
+    
+    // Build a valid DocTypeForm to be used in tests
+    List<Attribute> attrs = AttributeTest.generate(2);
+    this.attrMap = attributeMap(attrs);
+    this.valid = DocTypeFormTest.adaptToViewValues(DocTypeForm.toForm(DocTypeTest.generate(attrs, attrs.size())));
+    this.valid.setSystem(false);
   }
 
   /**
@@ -79,5 +104,124 @@ public class DocTypeAdminCtrlTest {
           .andExpect(model().attribute("attributeMap", attrMap))
           .andExpect(model().attribute("doctypes", dtList))
           .andExpect(view().name(DocTypeAdminCtrl.LIST));
+  }
+  
+  // UPDATE
+  @Test
+  void editGetForm() throws Exception {
+    // given
+    given(attributeService.getNameBasedMap()).willReturn(this.attrMap);
+    given(docTypeService.getByName(this.valid.getName())).willReturn(Optional.of(this.valid));
+  
+    // when
+    ResultActions result = mvc.perform(get("/admin/doctypes/edit/{name}", this.valid.getName()));
+  
+    // then
+    result.andExpect(status().isOk())
+          .andExpect(model().attribute(DocTypeAdminCtrl.ATTRMAP_ATTR, attrMap))
+          .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+          .andExpect(view().name(DocTypeAdminCtrl.ADD));
+  }
+  
+  @Test
+  void editGetFormNonExistingName() throws Exception {
+    //given
+    String name = "invalid";
+    given(docTypeService.getByName(name)).willReturn(Optional.empty());
+    
+    // when
+    ResultActions result = mvc.perform(get("/admin/doctypes/edit/{name}", name));
+    
+    // then
+    result.andExpect(status().isFound())
+          .andExpect(flash().attribute("fail", "edit.failed"))
+          .andExpect(redirectedUrl("/admin/doctypes"));
+  }
+  
+  // UPDATE
+  @Test
+  void editPostFormSuccess() throws Exception {
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/edit/"+this.valid.getName(), this.valid));
+    
+    // then
+    result.andExpect(status().isFound())
+        .andExpect(flash().attribute("success", "edit.success"))
+        .andExpect(redirectedUrl("/admin/doctypes"));
+  }
+  
+  @Test
+  void editPostFormNonMatchingNames() throws Exception {
+    // when
+    System.out.println(this.valid);
+    MockHttpServletRequestBuilder post = postForm("/admin/doctypes/edit/invalid", this.valid);
+    
+    ResultActions result = mvc.perform(post);
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(DocTypeAdminCtrl.ADD))
+        .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().hasErrors())
+        .andExpect(model().attributeHasFieldErrorCode(DocTypeAdminCtrl.MODEL_ATTR, "name", "mismatch.name"));
+  }
+  
+  @Test
+  void editPostFormBindingErrors() throws Exception {
+    // given
+    // simulate a validator error needing handling
+    doAnswer(new Answer() {
+      @Override
+      public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+        Errors errors = (Errors) invocationOnMock.getArguments()[1];
+        errors.reject("forcing some error");
+        return null;
+      }
+    }).when(docTypeFormValidator).validate(eq(this.valid), any(Errors.class));
+    
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/edit/"+this.valid.getName(), valid));
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(DocTypeAdminCtrl.ADD))
+        .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
+        // cannot check this in unit tests - property editors for maps are not picked up, thus the
+        // attribute mappings are always null (which is obviously different from this.valid)
+        //.andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().hasErrors());
+  }
+  
+  @Test
+  void editPostFormExceptionDTO() throws Exception {
+    // given
+    given(docTypeService.saveEdit(this.valid)).willThrow(RuntimeException.class);
+    
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/edit/"+this.valid.getName(), valid));
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(DocTypeAdminCtrl.ADD))
+        .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
+        // cannot check this in unit tests - property editors for maps are not picked up, thus the
+        // attribute mappings are always null (which is obviously different from this.valid)
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().attributeHasErrors(DocTypeAdminCtrl.MODEL_ATTR));
+  }
+  
+  /**
+   * Generate a map of attributes from a list, like in {@link AttributeService}.
+   * This is easier to use without any special mocking, etc.
+   * @param attrs
+   * @return
+   */
+  public static HashMap<String, Attribute> attributeMap(List<Attribute> attrs) {
+    HashMap<String, Attribute> map = new HashMap<>();
+    for(Attribute a : attrs) {
+      map.put(a.getName(), a);
+    }
+    return map;
   }
 }

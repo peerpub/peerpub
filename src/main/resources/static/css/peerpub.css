@@ -1,5 +1,10 @@
 /* PeerPub Stylesheet */
 
+/* Deleted style class */
+.del {
+  text-decoration: line-through;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
