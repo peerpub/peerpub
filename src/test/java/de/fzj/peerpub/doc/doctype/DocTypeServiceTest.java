@@ -1,14 +1,15 @@
 package de.fzj.peerpub.doc.doctype;
 
-import name.falgout.jeffrey.testing.junit5.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,11 +69,14 @@ public class DocTypeServiceTest {
   @Test
   void saveEdit() {
     // given
-    DocTypeForm dtf = DocTypeForm.toForm(DocTypeTest.generate());
+    DocType test = DocTypeTest.generate();
+    DocTypeForm dtf = DocTypeForm.toForm(test);
+    doReturn(test).when(docTypeRepository).save(test);
+    
     // when
-    docTypeService.saveEdit(dtf);
+    DocTypeForm returned = docTypeService.saveEdit(dtf);
     // then
-    // NOOP - save operation just returns the saved object.
+    assertEquals(dtf, returned);
   }
   
 }

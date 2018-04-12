@@ -3,13 +3,15 @@ package de.fzj.peerpub.doc.doctype;
 import de.fzj.peerpub.doc.attribute.Attribute;
 import de.fzj.peerpub.doc.attribute.AttributeRepository;
 import de.fzj.peerpub.doc.attribute.AttributeTest;
-import name.falgout.jeffrey.testing.junit5.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 
@@ -18,6 +20,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willReturn;
+import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
 @Tag("fast")
@@ -38,8 +42,8 @@ public class DocTypeFormValidatorTest {
     this.docTypeFormValidator = new DocTypeFormValidator(attributeRepository, docTypeService);
     
     List<Attribute> attrs = AttributeTest.generate(2);
-    given(attributeRepository.findByName(attrs.get(0).getName())).willReturn(Optional.of(attrs.get(0)));
-    given(attributeRepository.findByName(attrs.get(1).getName())).willReturn(Optional.of(attrs.get(1)));
+    doReturn(Optional.of(attrs.get(0))).when(attributeRepository).findByName(attrs.get(0).getName());
+    doReturn(Optional.of(attrs.get(1))).when(attributeRepository).findByName(attrs.get(1).getName());
     
     // create non-system type
     this.valid = DocTypeForm.toForm(DocTypeTest.generate(attrs, 2));
@@ -50,12 +54,14 @@ public class DocTypeFormValidatorTest {
   }
   
   @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
   void supports() {
     assertFalse(this.docTypeFormValidator.supports(Object.class));
     assertTrue(this.docTypeFormValidator.supports(DocTypeForm.class));
   }
   
   @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
   void validateValidWithoutAttributes() {
     List<Attribute> attrs = AttributeTest.generate(2);
     DocTypeForm test = DocTypeForm.toForm(DocTypeTest.generate(attrs, 0));
@@ -83,6 +89,7 @@ public class DocTypeFormValidatorTest {
   }
   
   @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
   void validateNull() {
     this.docTypeFormValidator.validate(null, errors);
     assertTrue(errors.hasErrors());
@@ -163,6 +170,7 @@ public class DocTypeFormValidatorTest {
   }
   
   @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
   void validateNonExistantAttribute() {
     // given
     DocTypeForm invalid = valid;

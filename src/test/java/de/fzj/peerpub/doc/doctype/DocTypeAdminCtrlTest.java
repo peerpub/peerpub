@@ -1,15 +1,15 @@
 package de.fzj.peerpub.doc.doctype;
 
-import com.mongodb.MongoException;
 import de.fzj.peerpub.doc.attribute.*;
-import name.falgout.jeffrey.testing.junit5.MockitoExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,15 +25,10 @@ import static io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuil
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-// replace with "org.mockito.junit5.MockitoExtension" once it gets released...
-// see https://github.com/mockito/mockito/issues/1221
-// and https://github.com/mockito/mockito/issues/445
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest
@@ -85,6 +80,7 @@ public class DocTypeAdminCtrlTest {
 
   // READ
   @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
   void list() throws Exception {
     // given
     Attribute testAttr = AttributeTest.generate();
@@ -124,6 +120,7 @@ public class DocTypeAdminCtrlTest {
   }
   
   @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
   void editGetFormNonExistingName() throws Exception {
     //given
     String name = "invalid";
@@ -153,9 +150,7 @@ public class DocTypeAdminCtrlTest {
   @Test
   void editPostFormNonMatchingNames() throws Exception {
     // when
-    System.out.println(this.valid);
     MockHttpServletRequestBuilder post = postForm("/admin/doctypes/edit/invalid", this.valid);
-    
     ResultActions result = mvc.perform(post);
     
     // then
@@ -178,7 +173,7 @@ public class DocTypeAdminCtrlTest {
         errors.reject("forcing some error");
         return null;
       }
-    }).when(docTypeFormValidator).validate(eq(this.valid), any(Errors.class));
+    }).when(docTypeFormValidator).validate(any(DocTypeForm.class), any(Errors.class));
     
     // when
     ResultActions result = mvc.perform(postForm("/admin/doctypes/edit/"+this.valid.getName(), valid));
@@ -187,9 +182,7 @@ public class DocTypeAdminCtrlTest {
     result.andExpect(status().isOk())
         .andExpect(view().name(DocTypeAdminCtrl.ADD))
         .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
-        // cannot check this in unit tests - property editors for maps are not picked up, thus the
-        // attribute mappings are always null (which is obviously different from this.valid)
-        //.andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
         .andExpect(model().hasErrors());
   }
   

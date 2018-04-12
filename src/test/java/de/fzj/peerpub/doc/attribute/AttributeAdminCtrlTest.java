@@ -5,17 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.extension.ExtendWith;
-// replace with "org.mockito.junit5.MockitoExtension" once it gets released...
-// see https://github.com/mockito/mockito/issues/1221
-// and https://github.com/mockito/mockito/issues/445
-import name.falgout.jeffrey.testing.junit5.MockitoExtension;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.Mock;
-import org.mockito.InjectMocks;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 
