@@ -4,6 +4,7 @@ import de.fzj.peerpub.doc.attribute.Attribute;
 import de.fzj.peerpub.doc.attribute.AttributeService;
 import de.fzj.peerpub.doc.validator.Referable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -81,6 +82,45 @@ public class DocTypeAdminCtrl {
   public String list(ModelMap model) {
     model.addAttribute("doctypes", docTypeService.getAll());
     return LIST;
+  }
+  
+  /**
+   * Get add form.
+   * @return View name or redirect to list of attributes
+   */
+  @GetMapping("/add")
+  public String addGetForm(ModelMap model,
+                            RedirectAttributes redirectAttr) {
+    model.addAttribute(MODEL_ATTR, new DocTypeForm());
+    return ADD;
+  }
+  
+  /**
+   * Post add form
+   */
+  @PostMapping("/add")
+  public String addPostForm(ModelMap model,
+                            @ModelAttribute(MODEL_ATTR) @Validated DocTypeForm dtf,
+                            BindingResult binding,
+                            RedirectAttributes redirectAttr) {
+    // validation errors: let the user edit and try again
+    if (binding.hasErrors()) {
+      return ADD;
+    }
+    try {
+      docTypeService.saveAdd(dtf);
+    } catch (DuplicateKeyException e) {
+      binding.rejectValue("name", "duplicate.name", "This name is already in use.");
+      return ADD;
+    } catch (RuntimeException e) {
+      binding.reject("exception.unknown", e.getMessage());
+      //TODO: add logging of this exception
+      return ADD;
+    }
+    
+    // return to list of all attributes and set success flag with message code
+    redirectAttr.addFlashAttribute("success", "add.success");
+    return "redirect:/admin/doctypes";
   }
   
   /**

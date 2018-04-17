@@ -44,7 +44,7 @@ public class DocTypeForm {
    * A LIST of attribute names.
    * DO NOT USE A SET HERE - this would not be bindable by Thymeleaf forms.
    */
-  @UniqueElements @Referable private List<String> attributes;
+  @UniqueElements @Referable private List<String> attributes = new ArrayList<>();
   /**
    * The mandatory or optional status of an attribute.
    * Used because we cannot use a map of maps in forms.

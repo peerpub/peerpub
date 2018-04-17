@@ -1,6 +1,7 @@
 package de.fzj.peerpub.doc.doctype;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -43,6 +44,17 @@ public class DocTypeService {
       return Optional.of(DocTypeForm.toForm(dt));
     }
     return Optional.empty();
+  }
+  
+  /**
+   * Save new doc type to database
+   */
+  public DocTypeForm saveAdd(@NotNull DocTypeForm dtf) {
+    DocType dt = dtf.toType();
+    if (docTypeRepository.existsById(dt.getName())) {
+      throw new DuplicateKeyException("duplicate.name");
+    }
+    return DocTypeForm.toForm(docTypeRepository.save(dt));
   }
   
   /**

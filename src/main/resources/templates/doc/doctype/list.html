@@ -23,7 +23,7 @@
           <i class="arrow fas fa-angle-right"></i>
           [[#{legend}]] <i class="fas fa-info-circle"></i>
         </button>
-        <a class="btn btn-link float-right" href="#">
+        <a class="btn btn-link float-right" href="#" th:href="${#mvc.url('DTAC#addGetForm').build()}">
           [[#{add}]] <i class="fas fa-plus-circle"></i>
         </a>
       </div>
@@ -46,7 +46,7 @@
         <button class="btn btn-link collapsed" data-toggle="collapse" th:data-target="'#dt-'+${doctype.name}"
                 aria-expanded="false" th:aria-controls="'attr-'+${doctype.name}">
           <i class="arrow fas fa-angle-right"></i>
-          [[#{${doctype.displayName}}]]
+          <span th:text="${doctype.system} ? #{${doctype.displayName}} : ${doctype.displayName}">Doctype Display name</span>
         </button>
         <span class="float-right">
           <span th:if="${doctype.multiDoc} == true" data-toggle="tooltip" th:title="#{admin.doctype.multidoc}" th:id="${doctype.name}+'-multidoc'" class="multidoc"><i class="fas fa-list-alt mr-2"></i></span>
@@ -63,7 +63,7 @@
         <div class="card-body">
           <ul class="list-group">
             <li class="list-group-item">[[#{name}]] (ID): "[[${doctype.name}]]"</li>
-            <li class="list-group-item">[[#{displayName}]]: "[[#{${doctype.displayName}}]]"</li>
+            <li class="list-group-item">[[#{displayName}]]: "<span th:text="${doctype.system} ? #{${doctype.displayName}} : ${doctype.displayName}">Doctype Display name</span>"</li>
             <li th:if="${doctype.attributes.size()} > 0" class="list-group-item">
               <table class="table">
                 <thead>

@@ -13,6 +13,7 @@ import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -102,6 +103,86 @@ public class DocTypeAdminCtrlTest {
           .andExpect(view().name(DocTypeAdminCtrl.LIST));
   }
   
+  // CREATE
+  @Test
+  void addGetForm() throws Exception {
+    // given
+    given(attributeService.getNameBasedMap()).willReturn(this.attrMap);
+    
+    // when
+    ResultActions result = mvc.perform(get("/admin/doctypes/add"));
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(model().attribute(DocTypeAdminCtrl.ATTRMAP_ATTR, attrMap))
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, new DocTypeForm()))
+        .andExpect(view().name(DocTypeAdminCtrl.ADD));
+  }
+  
+  @Test
+  void addPostFormSuccess() throws Exception {
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/add", this.valid));
+    
+    // then
+    result.andExpect(status().isFound())
+        .andExpect(flash().attribute("success", "add.success"))
+        .andExpect(redirectedUrl("/admin/doctypes"));
+  }
+  
+  @Test
+  void addPostFormBindingErrors() throws Exception {
+    // given
+    // simulate a validator error needing handling
+    doAnswer(new Answer() {
+      @Override
+      public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+        Errors errors = (Errors) invocationOnMock.getArguments()[1];
+        errors.reject("forcing some error");
+        return null;
+      }
+    }).when(docTypeFormValidator).validate(any(DocTypeForm.class), any(Errors.class));
+    
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/add", this.valid));
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(DocTypeAdminCtrl.ADD))
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().hasErrors());
+  }
+  
+  @Test
+  void addPostFormDuplicateException() throws Exception {
+    // given
+    given(docTypeService.saveAdd(this.valid)).willThrow(DuplicateKeyException.class);
+    
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/add", this.valid));
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(DocTypeAdminCtrl.ADD))
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().attributeHasErrors(DocTypeAdminCtrl.MODEL_ATTR));
+  }
+  
+  @Test
+  void addPostFormExceptionDTO() throws Exception {
+    // given
+    given(docTypeService.saveAdd(this.valid)).willThrow(RuntimeException.class);
+    
+    // when
+    ResultActions result = mvc.perform(postForm("/admin/doctypes/add", this.valid));
+    
+    // then
+    result.andExpect(status().isOk())
+        .andExpect(view().name(DocTypeAdminCtrl.ADD))
+        .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+        .andExpect(model().attributeHasErrors(DocTypeAdminCtrl.MODEL_ATTR));
+  }
+  
   // UPDATE
   @Test
   void editGetForm() throws Exception {
@@ -116,6 +197,7 @@ public class DocTypeAdminCtrlTest {
     result.andExpect(status().isOk())
           .andExpect(model().attribute(DocTypeAdminCtrl.ATTRMAP_ATTR, attrMap))
           .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
+          .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
           .andExpect(view().name(DocTypeAdminCtrl.ADD));
   }
   
@@ -135,7 +217,6 @@ public class DocTypeAdminCtrlTest {
           .andExpect(redirectedUrl("/admin/doctypes"));
   }
   
-  // UPDATE
   @Test
   void editPostFormSuccess() throws Exception {
     // when
@@ -198,8 +279,6 @@ public class DocTypeAdminCtrlTest {
     result.andExpect(status().isOk())
         .andExpect(view().name(DocTypeAdminCtrl.ADD))
         .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
-        // cannot check this in unit tests - property editors for maps are not picked up, thus the
-        // attribute mappings are always null (which is obviously different from this.valid)
         .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
         .andExpect(model().attributeHasErrors(DocTypeAdminCtrl.MODEL_ATTR));
   }
