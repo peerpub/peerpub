@@ -184,4 +184,22 @@ public class DocTypeAdminCtrl {
     return "redirect:/admin/doctypes";
   }
   
+  /**
+   * Delete a document type in the database
+   * @param name Path variable with the document type name
+   * @return Redirection to list of document types
+   */
+  @GetMapping("/delete/{type}")
+  public String delete(@Referable @PathVariable("type") String name, RedirectAttributes redirectAttr) {
+    try {
+      docTypeService.deleteById(name);
+      redirectAttr.addFlashAttribute("success", "delete.success");
+    } catch (Exception e) {
+      // TODO: log this exception
+      redirectAttr.addFlashAttribute("fail", "delete.failed");
+      redirectAttr.addFlashAttribute("cause", e.getMessage());
+    }
+    return "redirect:/admin/doctypes";
+  }
+  
 }

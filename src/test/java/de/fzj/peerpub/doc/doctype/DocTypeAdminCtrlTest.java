@@ -26,6 +26,7 @@ import static io.florianlopes.spring.test.web.servlet.request.MockMvcRequestBuil
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -281,6 +282,34 @@ public class DocTypeAdminCtrlTest {
         .andExpect(model().attribute(DocTypeAdminCtrl.EDIT_ATTR, true))
         .andExpect(model().attribute(DocTypeAdminCtrl.MODEL_ATTR, this.valid))
         .andExpect(model().attributeHasErrors(DocTypeAdminCtrl.MODEL_ATTR));
+  }
+  
+  // DELETE
+  @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
+  void deleteSuccess() throws Exception {
+    // when
+    ResultActions result = mvc.perform(get("/admin/doctypes/delete/{type}", this.valid.getName()));
+  
+    // then
+    result.andExpect(status().isFound())
+        .andExpect(flash().attribute("success", "delete.success"))
+        .andExpect(redirectedUrl("/admin/doctypes"));
+  }
+  
+  @Test
+  @MockitoSettings(strictness = Strictness.LENIENT)
+  void deleteExceptionDTO() throws Exception {
+    // given
+    willThrow(RuntimeException.class).given(docTypeService).deleteById(this.valid.getName());
+    
+    // when
+    ResultActions result = mvc.perform(get("/admin/doctypes/delete/{type}", this.valid.getName()));
+  
+    // then
+    result.andExpect(status().isFound())
+        .andExpect(flash().attribute("fail", "delete.failed"))
+        .andExpect(redirectedUrl("/admin/doctypes"));
   }
   
   /**

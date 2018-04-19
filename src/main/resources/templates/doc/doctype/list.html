@@ -11,7 +11,7 @@
   
   <!-- alerts -->
   <div class="alert alert-success" role="alert" th:if="${success}" th:text="#{${success}}">SUCCESS</div>
-  <div class="alert alert-danger" role="alert" th:if="${fail}" th:text="#{${fail}}">FAILED</div>
+  <div class="alert alert-danger" role="alert" th:if="${fail}" th:text="#{${fail}}+' '+(${cause} ? #{${cause}} : '')">FAILED</div>
   
   <!-- list of metadata attributes -->
   <div id="doctype-list">
@@ -51,6 +51,11 @@
         <span class="float-right">
           <span th:if="${doctype.multiDoc} == true" data-toggle="tooltip" th:title="#{admin.doctype.multidoc}" th:id="${doctype.name}+'-multidoc'" class="multidoc"><i class="fas fa-list-alt mr-2"></i></span>
           <span th:if="${doctype.system} == true" data-toggle="tooltip" th:title="#{admin.doctype.system}" th:id="${doctype.name}+'-system'" class="system"><i class="fas fa-industry mr-3"></i></span>
+          <a th:unless="${doctype.system}"
+             class="text-danger btn btn-link float-right delete" href="#delete"
+             data-toggle="modal" th:data-name="${doctype.name}" th:data-action="${#mvc.url('DTAC#delete').arg(0,doctype.name).build()}">
+            [[#{delete}]] <i class="fas fa-trash"></i>
+          </a>
           <a class="btn btn-link" href="#"
              th:href="${#mvc.url('DTAC#editGetForm').arg(1,doctype.name).build()}">
             [[#{edit}]] <i class="fas fa-pencil-alt"></i>

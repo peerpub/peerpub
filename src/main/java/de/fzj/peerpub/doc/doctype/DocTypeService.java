@@ -1,5 +1,6 @@
 package de.fzj.peerpub.doc.doctype;
 
+import de.fzj.peerpub.doc.validator.Referable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -63,5 +64,19 @@ public class DocTypeService {
   public DocTypeForm saveEdit(@NotNull DocTypeForm dtf) {
     DocType dt = dtf.toType();
     return DocTypeForm.toForm(docTypeRepository.save(dt));
+  }
+  
+  /**
+   * Delete from database
+   */
+  public void deleteById(@Referable String name) {
+    Optional<DocType> oDt = docTypeRepository.findByName(name);
+    if (oDt.isPresent()) {
+      if (oDt.get().getSystem()) {
+        throw new IllegalArgumentException("delete.failed.system");
+      } else {
+        docTypeRepository.deleteById(name);
+      }
+    }
   }
 }

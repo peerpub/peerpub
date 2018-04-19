@@ -54,4 +54,29 @@ public class DocTypeServiceIT {
       assertEquals(1, docTypeService.getAll().size());
       assertEquals(read.getAttributes(), edited.getAttributes());
     }
+  
+    @Test
+    void deleteById() {
+      // given
+      DocType dt = DocTypeTest.generate();
+      dt.setSystem(false);
+      docTypeRepository.save(dt);
+      
+      // when
+      docTypeService.deleteById(dt.getName());
+      
+      // then
+      assertEquals(Optional.empty(), docTypeService.getByName(dt.getName()));
+    }
+    
+    @Test
+    void deleteByIdFailsSystemType() {
+      // given
+      DocType dt = DocTypeTest.generate();
+      dt.setSystem(true);
+      docTypeRepository.save(dt);
+  
+      // when
+      assertThrows(IllegalArgumentException.class, () -> docTypeService.deleteById(dt.getName()));
+    }
 }

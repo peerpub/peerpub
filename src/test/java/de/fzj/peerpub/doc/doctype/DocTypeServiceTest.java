@@ -79,4 +79,15 @@ public class DocTypeServiceTest {
     assertEquals(dtf, returned);
   }
   
+  @Test
+  void deleteByIdFailsSystemType() {
+    // given
+    DocType test = DocTypeTest.generate();
+    test.setSystem(true);
+    doReturn(Optional.of(test)).when(docTypeRepository).findByName(test.getName());
+  
+    // when+then
+    assertThrows(IllegalArgumentException.class, () -> docTypeService.deleteById(test.getName()));
+  }
+  
 }
