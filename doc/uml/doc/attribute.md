@@ -19,6 +19,12 @@ package doc.attribute {
     +findByKey(key: String): Attribute[0..*]
   }
 
+  Attribute <- AttributeService
+  AttributeRepository <- AttributeService
+  class AttributeService {
+    +getNameBasedMap(): Map<String, Attribute>
+  }
+
   Attribute <- AttributeAdminCtrl
   class AttributeAdminCtrl {
     +list()
