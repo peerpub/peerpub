@@ -7,6 +7,7 @@
 
 package de.fzj.peerpub.doc.publisher;
 
+import de.fzj.peerpub.doc.validator.Referable;
 import lombok.NonNull;
 import lombok.Data;
 import lombok.Setter;
@@ -56,13 +57,13 @@ public class Publisher {
 
   /**
    * A list of supported document types, referenced by their name (_id), see
-   * {@link model.doc.DocType}.
+   * {@link DocType}.
    * Not using @DBRef here, as this can only be indexed with a Compound Index.
    * To find all publishers that support some kind of doc type will be a very
    * common request, so a real index is preferrable here.
    */
   @Setter(AccessLevel.NONE)
-  @Indexed @NonNull private List<String> supports;
+  @Indexed @Referable private List<String> supports;
 
   /**
    * Map supported document types by their String _id with attributes by their

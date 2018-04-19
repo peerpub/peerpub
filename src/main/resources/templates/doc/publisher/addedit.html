@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: htmlhead"></head>
+<body>
+<header th:replace="layout :: header">Top navigation goes here</header>
+<main class="container">
+  <form action="#" th:action="${edit} ? ${#mvc.url('PAC#editPostForm').arg(1,doctype.name).build()} : ${#mvc.url('PAC#addPostForm').build()}"
+        th:object="${publisher}" method="post">
+    <input type="text" th:field="*{name}" class="form-control" th:errorclass="is-invalid" aria-describedby="nameHelp">
+    <div class="form-row" th:each="doctype, idx : *{supports}">
+      <h3 th:text="${doctype}">Doctype heading</h3>
+      <div class="form-row" th:each="attribute : *{map[__${doctype}__]}">
+        <input type="text" th:field="*{map[__${doctype}__][__${attribute.key}__][__${publisher.DEFAULT}__]}" />
+      </div>
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+</main>
+<footer th:replace="layout :: footer(~{::script})">
+  <script th:src="@{/webjars/handlebars/handlebars.min.js}"></script>
+  <script th:src="@{/webjars/alpaca/alpaca/bootstrap/alpaca.min.js}"></script>
+  <script th:inline="javascript">
+    $("#supports").alpaca({
+        "data": [],
+        "schema": {
+            "enum": ["bachelor", "master"]
+        },
+        "options": {
+            "label": "supports",
+            "name": "supports"
+        }
+    });
+  </script>
+</footer>
+</body>
+</html>
