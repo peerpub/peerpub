@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: htmlhead"></head>
+<body>
+  <header th:replace="layout :: header">Top navigation goes here</header>
+  <main class="container">
+    <h1 class="mt-3">[[#{admin.funding.award.list}]]</h1>
+    <!-- deletion modal -->
+    <div th:replace="modals/delete :: modal"></div>
+    
+    <!-- alerts -->
+    <div class="alert alert-success" role="alert" th:if="${success}" th:text="#{${success}}">SUCCESS</div>
+    <div class="alert alert-danger" role="alert" th:if="${fail}" th:text="#{${fail}}">FAILED</div>
+    
+    <!-- list of metadata attributes -->
+    <div id="award-list">
+      <!-- "add" link -->
+      <div class="card card-header">
+        <a class="btn btn-link text-right" href="#"
+           th:href="${#mvc.url('FAAC#addGetForm').build()}">
+          [[#{add}]] <i class="fas fa-plus-circle"></i>
+        </a>
+      </div>
+      <!-- actual list -->
+      <div class="card" th:each="award : ${awards}">
+        <div class="card-header accordion" th:id="${award.id}">
+          <button class="btn btn-link collapsed" data-toggle="collapse" th:data-target="'#award-'+${award.id}"
+                  aria-expanded="false" th:aria-controls="'award-'+${award.id}">
+            <i class="arrow fas fa-angle-right"></i> [[${award.funderName}+': '+${award.awardNumber}]]
+          </button>
+          <a class="text-danger btn btn-link float-right delete" href="#delete"
+             data-toggle="modal" th:data-name="${award.id}" th:data-action="${#mvc.url('FAAC#delete').arg(0,award.id).build()}">
+            [[#{delete}]] <i class="fas fa-trash"></i>
+          </a>
+          <a class="btn btn-link float-right" href="#"
+             th:href="${#mvc.url('FAAC#editGetForm').arg(1,award.id).build()}">
+            [[#{edit}]] <i class="fas fa-pencil-alt"></i>
+          </a>
+        </div>
+        <div th:id="'award-'+${award.id}" class="collapse" th:aria-labelledby="${award.id}" data-parent="#award-list">
+          <div class="card-body">
+            <ul class="list-group">
+              <li class="list-group-item">[[#{id}]]: "[[${award.id}]]"</li>
+              <li class="list-group-item">[[#{name}]]: "[[${award.funderName}]]", see also <a href="#" th:href="${award.funderIdentifier}" target="_blank">FundRef entry</a></li>
+              <li class="list-group-item">[[#{award}]]: "[[${award.awardNumber}]]"</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer th:replace="layout :: footer(_)">Footer goes here</footer>
+</body>
+</html>
