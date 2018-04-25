@@ -25,6 +25,7 @@
     <!-- testing properties -->
     <checkstyle.version>3.0.0</checkstyle.version>
     <checkstyle.allowInvalid>30</checkstyle.allowInvalid>
+    <checkstyle.headerLocation>doc/java.header</checkstyle.headerLocation>
     <pmd.version>3.9.0</pmd.version>
     <findbugs.version>3.0.5</findbugs.version>
     <junit.version>4.12</junit.version>
@@ -56,6 +57,7 @@
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
           <encoding>UTF-8</encoding>
+          <headerLocation>${checkstyle.headerLocation}</headerLocation>
           <consoleOutput>true</consoleOutput>
           <!-- <failsOnError>true</failsOnError> -->
           <failOnViolation>true</failOnViolation>
